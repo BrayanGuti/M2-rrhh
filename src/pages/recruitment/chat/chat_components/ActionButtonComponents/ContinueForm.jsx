@@ -23,7 +23,7 @@ export default function ContinueForm({ isFormValid }) {
         setTimeout(() => {
           const firstError = document.querySelector(".border-red-500");
           if (firstError) {
-            firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+            firstError.scrollIntoView({ behavior: "smooth" });
           }
         }, 100);
 

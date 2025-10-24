@@ -1,5 +1,6 @@
 // stores/useChatStore.js
 import { create } from "zustand";
+import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
 
 // Mensaje inicial de bienvenida
 const initialMessages = [
@@ -20,10 +21,15 @@ const initialMessages = [
 ];
 
 // Definición de fases lineales para cada flujo
-const VACANCY_PHASES = [
-  { id: "upload-cv", name: "Subir Hoja de Vida" },
-  { id: "form-datos-postulacion", name: "Datos Básicos" },
-  { id: "phase-2", name: "Información Personal" },
+const VACANCY_COVERTATION_PHASES_FLOW = [
+  { id: VACANCY_COVERTATION_PHASES.upload_cv },
+  { id: VACANCY_COVERTATION_PHASES.form_datos_postulacion },
+  { id: VACANCY_COVERTATION_PHASES.form_candidato },
+  { id: VACANCY_COVERTATION_PHASES.form_detalles_personales },
+  { id: VACANCY_COVERTATION_PHASES.form_informacion_academica },
+  { id: VACANCY_COVERTATION_PHASES.form_referencias_personales },
+  { id: VACANCY_COVERTATION_PHASES.form_datos_generales },
+  { id: VACANCY_COVERTATION_PHASES.form_tallas },
   // Aquí irán más fases cuando las implementes
 ];
 
@@ -81,7 +87,7 @@ export const useChatStore = create((set, get) => ({
   // Obtener las fases del flujo actual
   getCurrentFlowPhases: () => {
     const { currentFlow } = get();
-    if (currentFlow === "vacancy") return VACANCY_PHASES;
+    if (currentFlow === "vacancy") return VACANCY_COVERTATION_PHASES_FLOW;
     if (currentFlow === "appointment") return APPOINTMENT_PHASES;
     return [];
   },

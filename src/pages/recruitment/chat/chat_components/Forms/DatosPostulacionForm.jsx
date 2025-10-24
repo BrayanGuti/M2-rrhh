@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useFormDataStore } from "../../stores/useFormDataStore";
 import { getCurrentDateISO } from "../../services/dateUtils";
+import { VACANCY_COVERTATION_PHASES } from "../../const/Phases";
 
 const POSITIONS = [
   "Recepcionista",
@@ -32,7 +33,7 @@ export function DatosPostulacionForm() {
 
   // Guardar fecha automáticamente en el store al montar
   useEffect(() => {
-    setSection("datos_postulacion", (prev) => ({
+    setSection(VACANCY_COVERTATION_PHASES.form_datos_postulacion, (prev) => ({
       ...prev,
       fecha_solicitud: localData.fecha_solicitud,
     }));
@@ -41,7 +42,9 @@ export function DatosPostulacionForm() {
   // 🔥 Exponer función de validación para que ActionButtonArea la pueda llamar
   useEffect(() => {
     const triggerValidation = () => {
-      const result = validateSection("datos_postulacion");
+      const result = validateSection(
+        VACANCY_COVERTATION_PHASES.form_datos_postulacion
+      );
       setErrors(result.errors);
       return result.isValid;
     };
@@ -69,7 +72,7 @@ export function DatosPostulacionForm() {
     }
 
     // Guardar en el store global
-    setSection("datos_postulacion", (prev) => ({
+    setSection(VACANCY_COVERTATION_PHASES.form_datos_postulacion, (prev) => ({
       ...prev,
       [field]: value,
     }));

@@ -2,12 +2,19 @@ import { Avatar, AvatarFallback } from "../../../ui/avatar";
 import { useEffect, useRef } from "react";
 import { useChatStore } from "./stores/useChatStore";
 import { FormMessage } from "./chat_components/Forms/FormMessage";
+import { VACANCY_COVERTATION_PHASES } from "./const/Phases";
 
 export function MessageList() {
   const { messages, isProcessing, currentStep } = useChatStore();
   const messagesEndRef = useRef(null);
   const showForm =
-    currentStep === "form-datos-postulacion" || currentStep === "phase-2";
+    currentStep === VACANCY_COVERTATION_PHASES.form_datos_postulacion ||
+    currentStep === VACANCY_COVERTATION_PHASES.form_candidato ||
+    currentStep === VACANCY_COVERTATION_PHASES.form_detalles_personales ||
+    currentStep === VACANCY_COVERTATION_PHASES.form_informacion_academica ||
+    currentStep === VACANCY_COVERTATION_PHASES.form_referencias_personales ||
+    currentStep === VACANCY_COVERTATION_PHASES.form_datos_generales ||
+    currentStep === VACANCY_COVERTATION_PHASES.form_tallas;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

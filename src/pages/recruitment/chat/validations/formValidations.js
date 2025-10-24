@@ -30,6 +30,10 @@ export const validateDatosPostulacion = (data) => {
 export const validateCandidato = (data) => {
   const errors = {};
 
+  if (!data || typeof data !== "object") {
+    return { isValid: false, errors: {} };
+  }
+
   if (!data.nombre_completo || data.nombre_completo.trim().length < 3) {
     errors.nombre_completo =
       "El nombre completo es requerido (mínimo 3 caracteres)";

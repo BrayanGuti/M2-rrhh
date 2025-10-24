@@ -10,16 +10,20 @@ import {
   validateDatosGenerales,
   validateTallas,
 } from "../validations/formValidations";
+import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
 
 // 🎯 Mapa de validadores: clave = nombre de sección en formData
 const FORM_VALIDATORS = {
-  datos_postulacion: validateDatosPostulacion,
-  candidato: validateCandidato,
-  detalles_personales: validateDetallesPersonales,
-  informacion_academica: validateInformacionAcademica,
-  referencias_personales: validateReferenciasPersonales,
-  datos_generales: validateDatosGenerales,
-  tallas: validateTallas,
+  [VACANCY_COVERTATION_PHASES.form_datos_postulacion]: validateDatosPostulacion,
+  [VACANCY_COVERTATION_PHASES.form_candidato]: validateCandidato,
+  [VACANCY_COVERTATION_PHASES.form_detalles_personales]:
+    validateDetallesPersonales,
+  [VACANCY_COVERTATION_PHASES.form_informacion_academica]:
+    validateInformacionAcademica,
+  [VACANCY_COVERTATION_PHASES.form_referencias_personales]:
+    validateReferenciasPersonales,
+  [VACANCY_COVERTATION_PHASES.form_datos_generales]: validateDatosGenerales,
+  [VACANCY_COVERTATION_PHASES.form_tallas]: validateTallas,
 };
 
 export const useFormDataStore = create((set, get) => ({

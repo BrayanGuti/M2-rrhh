@@ -5,6 +5,7 @@ import {
   UploadCvButtons,
   ContinueForm,
 } from "./ActionButtonComponents";
+import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
 
 export function ActionButtonArea() {
   const { currentStep } = useChatStore();
@@ -29,28 +30,28 @@ export function ActionButtonArea() {
       case "initial-menu":
         return <InitialMenuButtons />;
 
-      case "upload-cv":
+      case VACANCY_COVERTATION_PHASES.upload_cv:
         return <UploadCvButtons />;
 
-      case "form-datos-postulacion":
+      case VACANCY_COVERTATION_PHASES.form_datos_postulacion:
         return <ContinueForm isFormValid={validateCurrentForm} />;
 
-      case "form-candidato":
+      case VACANCY_COVERTATION_PHASES.form_candidato:
         return <ContinueForm isFormValid={validateCurrentForm} />;
 
-      case "form-detalles-personales":
+      case VACANCY_COVERTATION_PHASES.form_detalles_personales:
         return <ContinueForm isFormValid={validateCurrentForm} />;
 
-      case "form-informacion-academica":
+      case VACANCY_COVERTATION_PHASES.form_informacion_academica:
         return <ContinueForm isFormValid={validateCurrentForm} />;
 
-      case "form-referencias-personales":
+      case VACANCY_COVERTATION_PHASES.form_referencias_personales:
         return <ContinueForm isFormValid={validateCurrentForm} />;
 
-      case "form-datos-generales":
+      case VACANCY_COVERTATION_PHASES.form_datos_generales:
         return <ContinueForm isFormValid={validateCurrentForm} />;
 
-      case "form-tallas":
+      case VACANCY_COVERTATION_PHASES.form_tallas:
         return <ContinueForm isFormValid={validateCurrentForm} />;
 
       default:
