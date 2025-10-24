@@ -54,6 +54,15 @@ export function ActionButtonArea() {
       case VACANCY_COVERTATION_PHASES.form_tallas:
         return <ContinueForm isFormValid={validateCurrentForm} />;
 
+      case VACANCY_COVERTATION_PHASES.form_informacion_familiar:
+        return <ContinueForm isFormValid={validateCurrentForm} />;
+
+      case VACANCY_COVERTATION_PHASES.form_informacion_laboral:
+        return <ContinueForm isFormValid={validateCurrentForm} />;
+
+      case VACANCY_COVERTATION_PHASES.form_datos_economicos:
+        return <ContinueForm isFormValid={validateCurrentForm} />;
+
       default:
         return null;
     }

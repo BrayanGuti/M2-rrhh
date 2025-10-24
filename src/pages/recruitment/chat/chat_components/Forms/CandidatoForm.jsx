@@ -175,7 +175,7 @@ function NombreCompletoInput({ handleChange, localData, errors }) {
         type="text"
         value={localData.nombre_completo}
         onChange={(e) => handleChange("nombre_completo", e.target.value)}
-        placeholder="Ej: Juan Pérez García"
+        placeholder="Ej: Juan Andres Pérez García"
         className={`w-full px-4 py-3 border rounded-lg text-[#15616D] focus:ring-2 focus:ring-[#44BBA4] focus:border-transparent transition-colors ${
           errors.nombre_completo ? "border-red-500" : "border-gray-300"
         }`}
@@ -238,9 +238,6 @@ function TelefonoMovilInput({ handleChange, localData, errors }) {
         <p className="text-xs text-red-500 mt-1 animate-shake">
           {errors.telefono_movil}
         </p>
-      )}
-      {localData.telefono_movil && localData.telefono_movil.length === 10 && (
-        <p className="text-xs text-green-600 mt-1">✓ Número válido</p>
       )}
     </div>
   );
