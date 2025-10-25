@@ -7,9 +7,11 @@ import { useChatStore } from "../../stores/useChatStore";
 import { VACANCY_COVERTATION_PHASES } from "../../const/Phases";
 import { DetallesPersonalesForm } from "./DetallesPersonalesForm";
 import { InformacionAcademicaForm } from "./InformacionAcademicaForm";
+import { InformacionFamiliarForm } from "./InformacionFamiliarForm";
 
 export function FormMessage() {
   const { currentStep } = useChatStore();
+  console.log("Current Step in FormMessage:", currentStep);
 
   if (currentStep === VACANCY_COVERTATION_PHASES.form_datos_postulacion) {
     return <DatosPostulacionForm />;
@@ -25,6 +27,11 @@ export function FormMessage() {
   if (currentStep === VACANCY_COVERTATION_PHASES.form_informacion_academica) {
     return <InformacionAcademicaForm />;
   }
+
+  if (currentStep === VACANCY_COVERTATION_PHASES.form_informacion_familiar) {
+    return <InformacionFamiliarForm />;
+  }
+
   if (currentStep === VACANCY_COVERTATION_PHASES.form_referencias_personales) {
     return <div>Formulario de Referencias Personales (próximamente)</div>;
   }
@@ -33,10 +40,6 @@ export function FormMessage() {
   }
   if (currentStep === VACANCY_COVERTATION_PHASES.form_tallas) {
     return <div>Formulario de Tallas (próximamente)</div>;
-  }
-
-  if (currentStep === VACANCY_COVERTATION_PHASES.form_informacion_familiar) {
-    return <div>Formulario de Información Familiar (próximamente)</div>;
   }
 
   if (currentStep === VACANCY_COVERTATION_PHASES.form_informacion_laboral) {

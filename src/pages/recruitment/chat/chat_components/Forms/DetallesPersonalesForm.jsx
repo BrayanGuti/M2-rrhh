@@ -366,19 +366,19 @@ function LibretaMilitarInput({
                 : "bg-gray-200 text-[#15616D] hover:bg-gray-300"
             }`}
           >
-            {isNoAplica ? "Aplica" : "No Aplica"}
+            {isNoAplica ? "Si Tengo Libreta" : "No tengo Libreta"}
           </button>
 
           {/* Texto visible solo en pantallas grandes */}
           <p className="text-xs text-[#15616D]/60 italic hidden md:block">
-            Presiono "No Aplica" si no aplica
+            Presiono "No tengo Libreta" si no cuentas con una
           </p>
         </div>
       </div>
 
       {/* Texto visible en móvil debajo del grupo */}
       <p className="text-xs text-[#15616D]/60 italic mt-1 md:hidden">
-        Presiono "No Aplica" si no aplica
+        Presiono "No tengo Libreta" si no cuentas con una
       </p>
 
       {errors.libreta_militar_numero && (

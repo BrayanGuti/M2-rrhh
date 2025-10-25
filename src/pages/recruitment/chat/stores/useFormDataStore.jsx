@@ -9,6 +9,7 @@ import {
   validateReferenciasPersonales,
   validateDatosGenerales,
   validateTallas,
+  validateInformacionFamiliar,
 } from "../validations/formValidations";
 import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
 
@@ -24,6 +25,8 @@ const FORM_VALIDATORS = {
     validateReferenciasPersonales,
   [VACANCY_COVERTATION_PHASES.form_datos_generales]: validateDatosGenerales,
   [VACANCY_COVERTATION_PHASES.form_tallas]: validateTallas,
+  [VACANCY_COVERTATION_PHASES.form_informacion_familiar]:
+    validateInformacionFamiliar,
 };
 
 export const useFormDataStore = create((set, get) => ({

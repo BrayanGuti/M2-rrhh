@@ -11,9 +11,12 @@ export function MessageList() {
     currentStep === VACANCY_COVERTATION_PHASES.form_datos_postulacion ||
     currentStep === VACANCY_COVERTATION_PHASES.form_candidato ||
     currentStep === VACANCY_COVERTATION_PHASES.form_detalles_personales ||
+    currentStep === VACANCY_COVERTATION_PHASES.form_informacion_familiar ||
     currentStep === VACANCY_COVERTATION_PHASES.form_informacion_academica ||
+    currentStep === VACANCY_COVERTATION_PHASES.form_informacion_laboral ||
     currentStep === VACANCY_COVERTATION_PHASES.form_referencias_personales ||
     currentStep === VACANCY_COVERTATION_PHASES.form_datos_generales ||
+    currentStep === VACANCY_COVERTATION_PHASES.form_datos_economicos ||
     currentStep === VACANCY_COVERTATION_PHASES.form_tallas;
 
   useEffect(() => {
