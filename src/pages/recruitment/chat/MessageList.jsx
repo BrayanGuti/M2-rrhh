@@ -140,11 +140,10 @@ function MessageBubble({ message }) {
 }
 
 function SubmissionStatusMessage({ status, message }) {
-  // Diferentes estilos según el estado
   const statusStyles = {
-    sending: "bg-blue-50 border-blue-200 text-blue-900",
-    success: "bg-green-50 border-green-200 text-green-900",
-    error: "bg-red-50 border-red-200 text-red-900",
+    sending: "border-blue-200 text-blue-900",
+    success: "border-green-200 text-green-900",
+    error: "border-red-200 text-red-900",
   };
 
   return (

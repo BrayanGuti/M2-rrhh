@@ -67,7 +67,6 @@ export function ActionButtonArea() {
         return <ContinueForm isFormValid={validateCurrentForm} />;
 
       case VACANCY_COVERTATION_PHASES.form_resumen:
-        console.log("Rendering SubmitApplicationButton for step:", currentStep);
         return <SubmitApplicationButton />;
 
       default:

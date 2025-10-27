@@ -1,6 +1,7 @@
 // stores/useFormDataStore.js
 import { create } from "zustand";
 import { initialFormData } from "./const";
+import { sendApplication } from "../services/apiServices";
 import {
   validateDatosPostulacion,
   validateCandidato,
@@ -15,7 +16,10 @@ import {
 } from "../validations/formValidations";
 import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
 
-// 🎯 Mapa de validadores: clave = nombre de sección en formData
+// ============================================
+// VALIDADORES
+// ============================================
+
 const FORM_VALIDATORS = {
   [VACANCY_COVERTATION_PHASES.form_datos_postulacion]: validateDatosPostulacion,
   [VACANCY_COVERTATION_PHASES.form_candidato]: validateCandidato,
@@ -34,180 +38,71 @@ const FORM_VALIDATORS = {
   [VACANCY_COVERTATION_PHASES.form_tallas]: validateTallas,
 };
 
+// ============================================
+// STORE
+// ============================================
+
 export const useFormDataStore = create((set, get) => ({
+  // Estado del formulario
   formData: initialFormData,
-  extractedCVData: null,
   uploadToken: null,
 
-  // === VALIDADORES ===
+  // ==========================================
+  // GESTIÓN DE DATOS DEL FORMULARIO
+  // ==========================================
 
   /**
-   * Obtiene la función de validación para una sección específica
-   * @param {string} sectionName - Nombre de la sección (ej: "datos_postulacion")
-   * @returns {Function|null} Función de validación o null si no existe
+   * Actualiza múltiples secciones del formulario con datos extraídos del CV
+   * @param {Object} extractedData - Datos del CV por sección
+   * @param {string} token - Token de subida del CV
    */
-  getValidator: (sectionName) => {
-    return FORM_VALIDATORS[sectionName] || null;
-  },
-
-  /**
-   * Valida una sección específica del formulario
-   * @param {string} sectionName - Nombre de la sección a validar
-   * @returns {Object} { isValid: boolean, errors: {} }
-   */
-  validateSection: (sectionName) => {
-    const validator = FORM_VALIDATORS[sectionName];
-
-    if (!validator) {
-      console.warn(`No existe validador para la sección: ${sectionName}`);
-      return { isValid: true, errors: {} };
-    }
-
-    const sectionData = get().formData[sectionName];
-    return validator(sectionData);
-  },
-
-  // === VALIDACIÓN GLOBAL Y SUBMIT ===
-
-  /**
-   * Valida todas las secciones del formulario
-   * @returns {Object} { isValid: boolean, errorsBySections: {}, totalErrors: number }
-   */
-  validateAllSections: () => {
-    const formData = get().formData;
-    const allErrors = {};
-    let totalErrors = 0;
-
-    // Validar cada sección
-    Object.entries(FORM_VALIDATORS).forEach(([phaseKey, validator]) => {
-      const sectionKey = phaseKey.replace("form-", "").replace(/-/g, "_");
-
-      let result;
-
-      // Caso especial: informacion_familiar necesita detalles_personales
-      if (sectionKey === "informacion_familiar") {
-        result = validator(
-          formData.informacion_familiar,
-          formData.detalles_personales
-        );
-      } else {
-        result = validator(formData[sectionKey]);
-      }
-
-      if (!result.isValid) {
-        allErrors[phaseKey] = result.errors;
-        totalErrors += Object.keys(result.errors).length;
-      }
-    });
-
-    return {
-      isValid: Object.keys(allErrors).length === 0,
-      errorsBySections: allErrors,
-      totalErrors,
-    };
-  },
-
-  /**
-   * Envía la aplicación al servidor
-   * @returns {Promise<Object>} Respuesta del servidor
-   */
-  // submitApplication: async () => {
-  //   const fullFormData = get().formData;
-
-  //   try {
-  //     const response = await fetch("/api/submit/application", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(fullFormData),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error(`Error HTTP: ${response.status}`);
-  //     }
-
-  //     const data = await response.json();
-  //     return {
-  //       success: true,
-  //       data,
-  //     };
-  //   } catch (error) {
-  //     console.error("Error al enviar la aplicación:", error);
-  //     return {
-  //       success: false,
-  //       error: error.message,
-  //     };
-  //   }
-  // },
-
-  submitApplication: async () => {
-    const fullFormData = get().formData;
-
-    try {
-      console.log("Simulando envío de aplicación con datos:", fullFormData);
-
-      // Simula un pequeño retardo de red
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Respuesta simulada
-      const data = { exito: true };
-
-      return {
-        success: true,
-        data,
-      };
-    } catch (error) {
-      console.error("Error simulado al enviar la aplicación:", error);
-      return {
-        success: false,
-        error: error.message,
-      };
-    }
-  },
-
-  /**
-   * Convierte un currentStep (formato: "form-datos-postulacion")
-   * al nombre de sección en formData (formato: "datos_postulacion")
-   * @param {string} currentStep - Paso actual del chat
-   * @returns {string|null} Nombre de la sección o null
-   */
-  getFormSectionFromStep: (currentStep) => {
-    // Remover el prefijo "form-" y reemplazar guiones por guiones bajos
-    if (!currentStep || !currentStep.startsWith("form-")) {
-      return null;
-    }
-
-    return currentStep.replace("form-", "").replace(/-/g, "_");
-  },
-
-  // === FUNCIONES PARA MANEJAR CV ===
-
-  setExtractedData: (extractedData, token) => {
-    set({
-      extractedCVData: extractedData,
-      uploadToken: token,
-      formData: {
-        ...get().formData,
-        upload_token: token,
-      },
-    });
-  },
-
-  // === FUNCIONES PARA MANEJAR CAMPOS ===
-
-  setField: (path, value) => {
+  applyExtractedData: (extractedData, token) => {
     set((state) => {
       const newFormData = { ...state.formData };
-      setNestedValue(newFormData, path, value);
-      return { formData: newFormData };
+
+      // Aplicar token de subida
+      if (token) {
+        newFormData.upload_token = token;
+      }
+
+      // Aplicar datos extraídos por cada sección
+      if (extractedData.candidato) {
+        newFormData.candidato = {
+          ...newFormData.candidato,
+          ...extractedData.candidato,
+        };
+      }
+
+      if (extractedData.informacion_academica) {
+        newFormData.informacion_academica = {
+          ...newFormData.informacion_academica,
+          ...extractedData.informacion_academica,
+        };
+      }
+
+      if (extractedData.informacion_laboral) {
+        newFormData.informacion_laboral = extractedData.informacion_laboral;
+      }
+
+      if (extractedData.referencias_personales) {
+        newFormData.referencias_personales =
+          extractedData.referencias_personales;
+      }
+
+      console.log("✅ Datos extraídos aplicados al formulario:", newFormData);
+
+      return {
+        formData: newFormData,
+        uploadToken: token,
+      };
     });
   },
 
-  getField: (path) => {
-    return getNestedValue(get().formData, path);
-  },
-
+  /**
+   * Actualiza una sección completa del formulario
+   * @param {string} section - Nombre de la sección
+   * @param {Object|Function|Array} data - Datos nuevos o función que recibe datos actuales
+   */
   setSection: (section, data) => {
     set((state) => {
       // Si data es una función, ejecutarla con la sección actual
@@ -220,7 +115,7 @@ export const useFormDataStore = create((set, get) => ({
         };
       }
 
-      // Si data es un array, reemplazar directamente (no hacer spread)
+      // Si data es un array, reemplazar directamente
       if (Array.isArray(data)) {
         return {
           formData: {
@@ -243,12 +138,46 @@ export const useFormDataStore = create((set, get) => ({
     });
   },
 
+  /**
+   * Obtiene una sección del formulario
+   * @param {string} section
+   * @returns {Object|Array}
+   */
   getSection: (section) => {
     return get().formData[section];
   },
 
-  // === FUNCIONES PARA ARRAYS ===
+  /**
+   * Actualiza un campo específico usando path notation
+   * @param {string} path - Ruta del campo (ej: "candidato.nombre_completo")
+   * @param {*} value - Nuevo valor
+   */
+  setField: (path, value) => {
+    set((state) => {
+      const newFormData = { ...state.formData };
+      setNestedValue(newFormData, path, value);
+      return { formData: newFormData };
+    });
+  },
 
+  /**
+   * Obtiene el valor de un campo usando path notation
+   * @param {string} path
+   * @returns {*}
+   */
+  getField: (path) => {
+    return getNestedValue(get().formData, path);
+  },
+
+  // ==========================================
+  // GESTIÓN DE ARRAYS
+  // ==========================================
+
+  /**
+   * Agrega un item a un array
+   * @param {string} path - Ruta del array
+   * @param {*} item - Item a agregar
+   */
   addArrayItem: (path, item) => {
     set((state) => {
       const newFormData = { ...state.formData };
@@ -262,6 +191,12 @@ export const useFormDataStore = create((set, get) => ({
     });
   },
 
+  /**
+   * Actualiza un item en un array
+   * @param {string} path - Ruta del array
+   * @param {number} index - Índice del item
+   * @param {*} item - Nuevo valor
+   */
   updateArrayItem: (path, index, item) => {
     set((state) => {
       const newFormData = { ...state.formData };
@@ -277,6 +212,11 @@ export const useFormDataStore = create((set, get) => ({
     });
   },
 
+  /**
+   * Elimina un item de un array
+   * @param {string} path - Ruta del array
+   * @param {number} index - Índice del item a eliminar
+   */
   removeArrayItem: (path, index) => {
     set((state) => {
       const newFormData = { ...state.formData };
@@ -291,8 +231,104 @@ export const useFormDataStore = create((set, get) => ({
     });
   },
 
-  // === VALIDACIÓN Y UTILIDADES ===
+  // ==========================================
+  // VALIDACIÓN
+  // ==========================================
 
+  /**
+   * Valida una sección específica del formulario
+   * @param {string} phaseKey - Clave de la fase (ej: "form-candidato")
+   * @returns {Object} { isValid: boolean, errors: {} }
+   */
+  validateSection: (phaseKey) => {
+    const validator = FORM_VALIDATORS[phaseKey];
+
+    if (!validator) {
+      console.warn(`No existe validador para la fase: ${phaseKey}`);
+      return { isValid: true, errors: {} };
+    }
+
+    // Convertir phase key a section key
+    const sectionKey = phaseKey.replace("form-", "").replace(/-/g, "_");
+    const sectionData = get().formData[sectionKey];
+
+    // Caso especial: informacion_familiar necesita detalles_personales
+    if (sectionKey === "informacion_familiar") {
+      return validator(sectionData, get().formData.detalles_personales);
+    }
+
+    return validator(sectionData);
+  },
+
+  /**
+   * Valida todas las secciones del formulario
+   * @returns {Object} { isValid: boolean, errorsBySections: {}, totalErrors: number }
+   */
+  validateAllSections: () => {
+    const formData = get().formData;
+    const allErrors = {};
+    let totalErrors = 0;
+
+    Object.entries(FORM_VALIDATORS).forEach(([phaseKey, validator]) => {
+      const sectionKey = phaseKey.replace("form-", "").replace(/-/g, "_");
+      const sectionData = formData[sectionKey];
+
+      let result;
+
+      // Caso especial: informacion_familiar
+      if (sectionKey === "informacion_familiar") {
+        result = validator(sectionData, formData.detalles_personales);
+      } else {
+        result = validator(sectionData);
+      }
+
+      if (!result.isValid) {
+        allErrors[phaseKey] = result.errors;
+        totalErrors += Object.keys(result.errors).length;
+      }
+    });
+
+    return {
+      isValid: Object.keys(allErrors).length === 0,
+      errorsBySections: allErrors,
+      totalErrors,
+    };
+  },
+
+  // ==========================================
+  // ENVÍO DE APLICACIÓN
+  // ==========================================
+
+  /**
+   * Envía la aplicación completa al servidor
+   * @returns {Promise<{success: boolean, data?: Object, error?: string}>}
+   */
+  submitApplication: async () => {
+    const formData = get().formData;
+
+    console.log("📤 Enviando aplicación completa...", formData);
+
+    const result = await sendApplication(formData);
+
+    if (result.success) {
+      console.log("✅ Aplicación enviada exitosamente");
+    } else {
+      console.error("❌ Error al enviar aplicación:", result.error);
+    }
+
+    return result;
+  },
+
+  // ==========================================
+  // UTILIDADES
+  // ==========================================
+
+  /**
+   * Verifica si una sección está completa
+   * @param {string} section - Nombre de la sección
+   * @param {Array<string>} requiredFields - Campos requeridos
+   * @returns {boolean}
+   */
   isSectionComplete: (section, requiredFields = []) => {
     const sectionData = get().formData[section];
 
@@ -304,29 +340,52 @@ export const useFormDataStore = create((set, get) => ({
     });
   },
 
+  /**
+   * Obtiene todo el formulario
+   * @returns {Object}
+   */
   getFullFormData: () => {
     return get().formData;
   },
 
-  // === RESET ===
+  /**
+   * Convierte un currentStep a nombre de sección
+   * @param {string} currentStep - Paso actual (ej: "form-candidato")
+   * @returns {string|null} Nombre de sección (ej: "candidato")
+   */
+  getFormSectionFromStep: (currentStep) => {
+    if (!currentStep || !currentStep.startsWith("form-")) {
+      return null;
+    }
+    return currentStep.replace("form-", "").replace(/-/g, "_");
+  },
 
+  // ==========================================
+  // RESET
+  // ==========================================
+
+  /**
+   * Resetea todo el formulario a su estado inicial
+   */
   resetForm: () => {
     set({
       formData: initialFormData,
-      extractedCVData: null,
       uploadToken: null,
     });
+    console.log("🔄 Formulario reseteado");
   },
 
-  clearExtractedData: () => {
-    set({
-      extractedCVData: null,
-      uploadToken: null,
-    });
+  /**
+   * Limpia el token de subida
+   */
+  clearUploadToken: () => {
+    set({ uploadToken: null });
   },
 }));
 
-// === FUNCIONES AUXILIARES ===
+// ============================================
+// FUNCIONES AUXILIARES
+// ============================================
 
 function setNestedValue(obj, path, value) {
   const keys = path.split(".");

@@ -1,8 +1,13 @@
 // stores/useChatStore.js
 import { create } from "zustand";
 import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
+import { uploadCV, countExtractedFields } from "../services/apiServices";
+import { useFormDataStore } from "./useFormDataStore";
 
-// Mensaje inicial de bienvenida
+// ============================================
+// MENSAJES Y CONFIGURACIÓN INICIAL
+// ============================================
+
 const initialMessages = [
   {
     id: "welcome-1",
@@ -20,10 +25,12 @@ const initialMessages = [
   },
 ];
 
-// Definición de fases lineales para cada flujo
-const VACANCY_COVERTATION_PHASES_FLOW = [
+// ============================================
+// FLUJOS DE CONVERSACIÓN
+// ============================================
+
+const VACANCY_FLOW_PHASES = [
   { id: VACANCY_COVERTATION_PHASES.upload_cv },
-  { id: VACANCY_COVERTATION_PHASES.form_resumen },
   { id: VACANCY_COVERTATION_PHASES.form_datos_postulacion },
   { id: VACANCY_COVERTATION_PHASES.form_candidato },
   { id: VACANCY_COVERTATION_PHASES.form_detalles_personales },
@@ -34,33 +41,39 @@ const VACANCY_COVERTATION_PHASES_FLOW = [
   { id: VACANCY_COVERTATION_PHASES.form_datos_generales },
   { id: VACANCY_COVERTATION_PHASES.form_datos_economicos },
   { id: VACANCY_COVERTATION_PHASES.form_tallas },
+  { id: VACANCY_COVERTATION_PHASES.form_resumen },
 ];
 
-const APPOINTMENT_PHASES = [
+const APPOINTMENT_FLOW_PHASES = [
   { id: "verify-info", name: "Verificar Información" },
   { id: "select-date", name: "Seleccionar Nueva Fecha" },
-  // Aquí irán más fases cuando las implementes
 ];
 
+// ============================================
+// STORE
+// ============================================
+
 export const useChatStore = create((set, get) => ({
-  // Estado actual del chat
+  // Estado de la conversación
   currentStep: "initial-menu",
-  currentFlow: null, // 'vacancy' o 'appointment'
-  currentPhase: null, // Fase actual dentro del flujo
-  currentPhaseIndex: 0, // Índice de la fase actual
+  currentFlow: null, // 'vacancy' | 'appointment' | null
+  currentPhase: null,
+  currentPhaseIndex: 0,
+
+  // Mensajes
   messages: initialMessages,
   isProcessing: false,
+
+  // Control de navegación
   returningToSummary: false,
+
+  // Estado de envío de aplicación
   submissionStatus: null, // null | 'sending' | 'success' | 'error'
   submissionMessage: null,
 
-  setSubmissionStatus: (status, message) =>
-    set({ submissionStatus: status, submissionMessage: message }),
-
-  clearSubmissionStatus: () =>
-    set({ submissionStatus: null, submissionMessage: null }),
-
-  // === FUNCIONES PARA MENSAJES ===
+  // ==========================================
+  // GESTIÓN DE MENSAJES
+  // ==========================================
 
   addBotMessage: (content) =>
     set((state) => ({
@@ -88,7 +101,19 @@ export const useChatStore = create((set, get) => ({
       ],
     })),
 
-  // === FUNCIONES PARA NAVEGACIÓN ===
+  // ==========================================
+  // ESTADO DE ENVÍO
+  // ==========================================
+
+  setSubmissionStatus: (status, message) =>
+    set({ submissionStatus: status, submissionMessage: message }),
+
+  clearSubmissionStatus: () =>
+    set({ submissionStatus: null, submissionMessage: null }),
+
+  // ==========================================
+  // NAVEGACIÓN ENTRE FASES
+  // ==========================================
 
   setStep: (step) => set({ currentStep: step }),
 
@@ -96,15 +121,21 @@ export const useChatStore = create((set, get) => ({
 
   setProcessing: (processing) => set({ isProcessing: processing }),
 
-  // Obtener las fases del flujo actual
+  /**
+   * Obtiene las fases del flujo actual
+   * @returns {Array}
+   */
   getCurrentFlowPhases: () => {
     const { currentFlow } = get();
-    if (currentFlow === "vacancy") return VACANCY_COVERTATION_PHASES_FLOW;
-    if (currentFlow === "appointment") return APPOINTMENT_PHASES;
+    if (currentFlow === "vacancy") return VACANCY_FLOW_PHASES;
+    if (currentFlow === "appointment") return APPOINTMENT_FLOW_PHASES;
     return [];
   },
 
-  // Avanzar a la siguiente fase
+  /**
+   * Avanza a la siguiente fase del flujo
+   * @returns {boolean} true si avanzó, false si no hay más fases
+   */
   moveToNextPhase: () => {
     const { currentPhaseIndex, getCurrentFlowPhases, returningToSummary } =
       get();
@@ -142,19 +173,16 @@ export const useChatStore = create((set, get) => ({
 
     return false; // No hay más fases
   },
-  // === MANEJO DE FLUJO DE VACANTES ===
 
+  /**
+   * Salta a una fase específica del flujo
+   * @param {string} step - ID de la fase
+   */
   setCurrentStep: (step) => {
     const phases = get().getCurrentFlowPhases();
     const phaseIndex = phases.findIndex((p) => p.id === step);
-    console.log(
-      "Setting current step to:",
-      step,
-      "Found phase index:",
-      phaseIndex,
-      "Phases:",
-      phases
-    );
+
+    console.log("Saltando a fase:", step, "Índice:", phaseIndex);
 
     if (phaseIndex !== -1) {
       set({
@@ -166,6 +194,13 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  // ==========================================
+  // FLUJO: APLICACIÓN A VACANTE
+  // ==========================================
+
+  /**
+   * Inicia el flujo de aplicación a vacante
+   */
   selectVacancy: () => {
     const { addUserMessage, addBotMessage, setStep } = get();
 
@@ -174,7 +209,7 @@ export const useChatStore = create((set, get) => ({
     set({
       isProcessing: true,
       currentFlow: "vacancy",
-      currentPhase: "upload-cv",
+      currentPhase: VACANCY_COVERTATION_PHASES.upload_cv,
       currentPhaseIndex: 0,
     });
 
@@ -191,38 +226,39 @@ export const useChatStore = create((set, get) => ({
         </>
       );
 
-      setStep("upload-cv");
+      setStep(VACANCY_COVERTATION_PHASES.upload_cv);
     }, 1500);
   },
 
-  // Maneja la subida del CV
+  /**
+   * Maneja la subida y procesamiento del CV
+   * @param {File} file - Archivo PDF del CV
+   */
   handleCVUpload: async (file) => {
-    const {
-      addUserMessage,
-      addBotMessage,
-      setProcessing,
-      setStep,
-      moveToNextPhase,
-    } = get();
+    const { addUserMessage, addBotMessage, setProcessing, moveToNextPhase } =
+      get();
 
     addUserMessage(`📄 ${file.name}`);
     setProcessing(true);
     addBotMessage("Perfecto, estoy procesando tu hoja de vida... 🔍");
 
-    // Simular delay para mejor UX
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
     try {
-      // Importar la función uploadCV
-      const { uploadCV } = await import("../services/apiServices");
-
+      // Subir y procesar CV
       const response = await uploadCV(file);
 
-      // Guardar datos extraídos
-      set({
-        extractedCVData: response.datos_extraidos,
-        uploadToken: response.token_subida,
-      });
+      if (!response.exito) {
+        throw new Error("El servidor no pudo procesar el CV");
+      }
+
+      // Aplicar datos extraídos al formulario usando el store de formulario
+      const formStore = useFormDataStore.getState();
+      formStore.applyExtractedData(
+        response.datos_extraidos,
+        response.token_subida
+      );
+
+      // Contar campos extraídos para mensaje informativo
+      const fieldsCount = countExtractedFields(response.datos_extraidos);
 
       setTimeout(() => {
         addBotMessage(
@@ -230,15 +266,16 @@ export const useChatStore = create((set, get) => ({
             ¡Excelente! 🎉 He procesado tu hoja de vida exitosamente.
             <br />
             <br />
-            Pude extraer información importante que te ayudará a completar el
-            formulario más rápido.
+            Pude extraer <strong>{fieldsCount} datos</strong> que te ayudarán a
+            completar el formulario más rápido.
           </>
         );
 
         setTimeout(() => {
           addBotMessage("Ahora continuemos con los siguientes datos...");
           setProcessing(false);
-          // Avanzar a la siguiente fase
+
+          // Avanzar a la siguiente fase después de un momento
           setTimeout(() => {
             const hasNext = moveToNextPhase();
             if (hasNext) {
@@ -246,36 +283,45 @@ export const useChatStore = create((set, get) => ({
             }
           }, 1000);
         }, 2000);
-      }, 1000);
+      }, 1500);
     } catch (error) {
-      console.error("Error al subir CV:", error);
-      set({ isProcessing: false });
+      console.error("❌ Error al procesar CV:", error);
 
-      addBotMessage(
-        <>
-          ❌ Lo siento, hubo un problema al procesar tu hoja de vida.
-          <br />
-          <br />
-          Por favor, intenta subirla nuevamente. Asegúrate de que sea un archivo
-          PDF válido.
-        </>
-      );
-
-      // Mantener en la fase de upload-cv para que pueda reintentar
-      setStep("upload-cv");
+      setTimeout(() => {
+        setProcessing(false);
+        addBotMessage(
+          <>
+            ❌ Lo siento, hubo un problema al procesar tu hoja de vida.
+            <br />
+            <br />
+            <strong>Error:</strong> {error.message}
+            <br />
+            <br />
+            Por favor, intenta subirla nuevamente. Asegúrate de que sea un
+            archivo PDF válido y no supere los 10MB.
+          </>
+        );
+      }, 1500);
     }
   },
 
-  // Reintentar subida de CV
+  /**
+   * Permite reintentar la subida del CV
+   */
   retryCVUpload: () => {
     const { addBotMessage, setStep } = get();
 
     addBotMessage("Entendido, por favor sube tu hoja de vida nuevamente. 📄");
-    setStep("upload-cv");
+    setStep(VACANCY_COVERTATION_PHASES.upload_cv);
   },
 
-  // === MANEJO DE FLUJO DE CITAS ===
+  // ==========================================
+  // FLUJO: REAGENDAR CITA
+  // ==========================================
 
+  /**
+   * Inicia el flujo de reagendamiento de cita
+   */
   selectAppointment: () => {
     const { addUserMessage, addBotMessage, setStep } = get();
 
@@ -307,12 +353,17 @@ export const useChatStore = create((set, get) => ({
     }, 1500);
   },
 
-  // === RESET ===
+  // ==========================================
+  // RESET Y LIMPIEZA
+  // ==========================================
 
+  /**
+   * Resetea todo el chat y el formulario a su estado inicial
+   */
   resetChat: () => {
-    // También resetear el formulario al resetear el chat
-    const { useFormDataStore } = import("./useFormDataStore");
-    useFormDataStore.getState().resetForm();
+    // Resetear también el formulario
+    const formStore = useFormDataStore.getState();
+    formStore.resetForm();
 
     set({
       currentStep: "initial-menu",
@@ -321,6 +372,11 @@ export const useChatStore = create((set, get) => ({
       currentPhaseIndex: 0,
       messages: initialMessages,
       isProcessing: false,
+      returningToSummary: false,
+      submissionStatus: null,
+      submissionMessage: null,
     });
+
+    console.log("🔄 Chat reseteado");
   },
 }));
