@@ -1,13 +1,18 @@
 // chat_components/FormMessage.jsx
 // Este componente se usa para mostrar formularios dentro de los mensajes del bot
 
-import { DatosPostulacionForm } from "./DatosPostulacionForm";
-import { CandidatoForm } from "./CandidatoForm";
+import { DatosPostulacionForm } from "./DatosPostulacionForm/DatosPostulacionForm";
+import { CandidatoForm } from "./CandidatoForm/CandidatoForm";
 import { useChatStore } from "../../stores/useChatStore";
 import { VACANCY_COVERTATION_PHASES } from "../../const/Phases";
-import { DetallesPersonalesForm } from "./DetallesPersonalesForm";
-import { InformacionAcademicaForm } from "./InformacionAcademicaForm";
-import { InformacionFamiliarForm } from "./InformacionFamiliarForm";
+import { DetallesPersonalesForm } from "./DetallesPersonalesForm/DetallesPersonalesForm";
+import { InformacionAcademicaForm } from "./InformacionAcademicaForm/InformacionAcademicaForm";
+import { InformacionFamiliarForm } from "./InformacionFamiliarForm/InformacionFamiliarForm";
+import { InformacionLaboralForm } from "./InformacionLaboralForm/InformacionLaboralForm";
+import { ReferenciasPersonalesForm } from "./ReferenciasPersonalesForm/ReferenciasPersonalesForm";
+import { DatosGeneralesForm } from "./DatosGeneralesForm/DatosGeneralesForm";
+import { DatosEconomicosForm } from "./DatosEconomicosForm/DatosEconomicosForm";
+import { TallasForm } from "./TallasForm/TallasForm";
 
 export function FormMessage() {
   const { currentStep } = useChatStore();
@@ -24,32 +29,31 @@ export function FormMessage() {
   if (currentStep === VACANCY_COVERTATION_PHASES.form_detalles_personales) {
     return <DetallesPersonalesForm />;
   }
-  if (currentStep === VACANCY_COVERTATION_PHASES.form_informacion_academica) {
-    return <InformacionAcademicaForm />;
-  }
 
   if (currentStep === VACANCY_COVERTATION_PHASES.form_informacion_familiar) {
     return <InformacionFamiliarForm />;
   }
 
-  if (currentStep === VACANCY_COVERTATION_PHASES.form_referencias_personales) {
-    return <div>Formulario de Referencias Personales (próximamente)</div>;
-  }
-  if (currentStep === VACANCY_COVERTATION_PHASES.form_datos_generales) {
-    return <div>Formulario de Datos Generales (próximamente)</div>;
-  }
-  if (currentStep === VACANCY_COVERTATION_PHASES.form_tallas) {
-    return <div>Formulario de Tallas (próximamente)</div>;
+  if (currentStep === VACANCY_COVERTATION_PHASES.form_informacion_academica) {
+    return <InformacionAcademicaForm />;
   }
 
   if (currentStep === VACANCY_COVERTATION_PHASES.form_informacion_laboral) {
-    return <div>Formulario de Información Laboral (próximamente)</div>;
+    return <InformacionLaboralForm />;
   }
+
+  if (currentStep === VACANCY_COVERTATION_PHASES.form_referencias_personales) {
+    return <ReferenciasPersonalesForm />;
+  }
+  if (currentStep === VACANCY_COVERTATION_PHASES.form_datos_generales) {
+    return <DatosGeneralesForm />;
+  }
+
   if (currentStep === VACANCY_COVERTATION_PHASES.form_datos_economicos) {
-    return <div>Formulario de Datos Económicos (próximamente)</div>;
+    return <DatosEconomicosForm />;
   }
   if (currentStep === VACANCY_COVERTATION_PHASES.form_tallas) {
-    return <div>Formulario de Tallas (próximamente)</div>;
+    return <TallasForm />;
   }
 
   return null;

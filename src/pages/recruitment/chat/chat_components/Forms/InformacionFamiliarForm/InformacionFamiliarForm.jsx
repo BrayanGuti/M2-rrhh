@@ -1,8 +1,8 @@
 // chat_components/Forms/InformacionFamiliarForm.jsx
 import { useState, useEffect } from "react";
-import { useFormDataStore } from "../../stores/useFormDataStore";
-import { validateInformacionFamiliar } from "../../validations/formValidations";
-import { VACANCY_COVERTATION_PHASES } from "../../const/Phases";
+import { useFormDataStore } from "../../../stores/useFormDataStore";
+import { validateInformacionFamiliar } from "../../../validations/formValidations";
+import { VACANCY_COVERTATION_PHASES } from "../../../const/Phases";
 
 export function InformacionFamiliarForm() {
   const { formData, setSection } = useFormDataStore();
@@ -389,18 +389,20 @@ function HijosSection({
 }) {
   return (
     <div className="border border-[#44BBA4]/30 rounded-lg p-4 bg-[#44BBA4]/5">
-      <div className="flex items-center justify-between mb-3">
-        <h4 className="font-semibold text-[#15616D] flex items-center gap-2">
+      {/* ENCABEZADO RESPONSIVE */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+        <h4 className="font-semibold text-[#15616D] flex items-center gap-2 text-base sm:text-lg text-center sm:text-left">
           <span>👶</span> Información de Hijos{" "}
           <span className="text-red-500">*</span>
           <span className="text-xs font-normal text-[#15616D]/60">
             ({hijos.length} de {numHijosEsperados})
           </span>
         </h4>
+
         {hijos.length < numHijosEsperados && (
           <button
             onClick={agregarHijo}
-            className="text-sm bg-[#44BBA4] text-white px-3 py-1 rounded-lg hover:bg-[#3a9d8a] transition-colors"
+            className="text-sm bg-[#44BBA4] text-white px-3 py-1.5 rounded-lg hover:bg-[#3a9d8a] transition-colors self-center sm:self-auto"
           >
             ➕ Agregar hijo
           </button>
@@ -430,7 +432,9 @@ function HijosSection({
                 ❌ Eliminar
               </button>
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {/* Nombre */}
               <div>
                 <label className="block text-xs font-medium text-[#15616D] mb-1">
                   Nombre
@@ -454,6 +458,8 @@ function HijosSection({
                   </p>
                 )}
               </div>
+
+              {/* Edad */}
               <div>
                 <label className="block text-xs font-medium text-[#15616D] mb-1">
                   Edad
@@ -481,6 +487,8 @@ function HijosSection({
                   </p>
                 )}
               </div>
+
+              {/* Ocupación */}
               <div>
                 <label className="block text-xs font-medium text-[#15616D] mb-1">
                   Ocupación
@@ -648,8 +656,9 @@ function HermanosSection({
 }) {
   return (
     <div className="border border-[#44BBA4]/30 rounded-lg p-4 bg-[#44BBA4]/5">
-      <div className="flex items-center justify-between mb-3">
-        <h4 className="font-semibold text-[#15616D] flex items-center gap-2">
+      {/* ENCABEZADO RESPONSIVE */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+        <h4 className="font-semibold text-[#15616D] flex items-center gap-2 text-base sm:text-lg text-center sm:text-left">
           <span>👫</span> Información de Hermanos
           {hermanos.length > 0 && (
             <span className="text-xs font-normal text-[#15616D]/60">
@@ -657,16 +666,18 @@ function HermanosSection({
             </span>
           )}
         </h4>
+
         {hermanos.length < 5 && (
           <button
             onClick={agregarHermano}
-            className="text-sm bg-[#44BBA4] text-white px-3 py-1 rounded-lg hover:bg-[#3a9d8a] transition-colors"
+            className="text-sm bg-[#44BBA4] text-white px-3 py-1.5 rounded-lg hover:bg-[#3a9d8a] transition-colors self-center sm:self-auto"
           >
             ➕ Agregar hermano
           </button>
         )}
       </div>
 
+      {/* MENSAJE CUANDO NO HAY HERMANOS */}
       {hermanos.length === 0 ? (
         <p className="text-sm text-[#15616D]/60 text-center py-4">
           No hay hermanos agregados. Haz clic en "Agregar hermano" para
@@ -690,7 +701,10 @@ function HermanosSection({
                   ❌ Eliminar
                 </button>
               </div>
+
+              {/* CAMPOS DE INFORMACIÓN */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {/* Nombre */}
                 <div>
                   <label className="block text-xs font-medium text-[#15616D] mb-1">
                     Nombre
@@ -714,6 +728,8 @@ function HermanosSection({
                     </p>
                   )}
                 </div>
+
+                {/* Edad */}
                 <div>
                   <label className="block text-xs font-medium text-[#15616D] mb-1">
                     Edad
@@ -741,6 +757,8 @@ function HermanosSection({
                     </p>
                   )}
                 </div>
+
+                {/* Ocupación */}
                 <div>
                   <label className="block text-xs font-medium text-[#15616D] mb-1">
                     Ocupación

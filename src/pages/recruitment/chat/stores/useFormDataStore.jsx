@@ -10,6 +10,8 @@ import {
   validateDatosGenerales,
   validateTallas,
   validateInformacionFamiliar,
+  validateInformacionLaboral,
+  validateDatosEconomicos,
 } from "../validations/formValidations";
 import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
 
@@ -19,14 +21,17 @@ const FORM_VALIDATORS = {
   [VACANCY_COVERTATION_PHASES.form_candidato]: validateCandidato,
   [VACANCY_COVERTATION_PHASES.form_detalles_personales]:
     validateDetallesPersonales,
+  [VACANCY_COVERTATION_PHASES.form_informacion_familiar]:
+    validateInformacionFamiliar,
   [VACANCY_COVERTATION_PHASES.form_informacion_academica]:
     validateInformacionAcademica,
+  [VACANCY_COVERTATION_PHASES.form_informacion_laboral]:
+    validateInformacionLaboral,
   [VACANCY_COVERTATION_PHASES.form_referencias_personales]:
     validateReferenciasPersonales,
   [VACANCY_COVERTATION_PHASES.form_datos_generales]: validateDatosGenerales,
+  [VACANCY_COVERTATION_PHASES.form_datos_economicos]: validateDatosEconomicos,
   [VACANCY_COVERTATION_PHASES.form_tallas]: validateTallas,
-  [VACANCY_COVERTATION_PHASES.form_informacion_familiar]:
-    validateInformacionFamiliar,
 };
 
 export const useFormDataStore = create((set, get) => ({
@@ -105,18 +110,38 @@ export const useFormDataStore = create((set, get) => ({
   },
 
   setSection: (section, data) => {
-    set((state) => ({
-      formData: {
-        ...state.formData,
-        [section]:
-          typeof data === "function"
-            ? data(state.formData[section])
-            : {
-                ...state.formData[section],
-                ...data,
-              },
-      },
-    }));
+    set((state) => {
+      // Si data es una función, ejecutarla con la sección actual
+      if (typeof data === "function") {
+        return {
+          formData: {
+            ...state.formData,
+            [section]: data(state.formData[section]),
+          },
+        };
+      }
+
+      // Si data es un array, reemplazar directamente (no hacer spread)
+      if (Array.isArray(data)) {
+        return {
+          formData: {
+            ...state.formData,
+            [section]: [...data],
+          },
+        };
+      }
+
+      // Si data es un objeto, hacer merge
+      return {
+        formData: {
+          ...state.formData,
+          [section]: {
+            ...state.formData[section],
+            ...data,
+          },
+        },
+      };
+    });
   },
 
   getSection: (section) => {

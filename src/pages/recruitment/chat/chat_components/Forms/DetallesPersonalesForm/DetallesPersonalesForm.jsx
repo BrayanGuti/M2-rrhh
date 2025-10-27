@@ -1,7 +1,7 @@
 // chat_components/Forms/DetallesPersonalesForm.jsx
 import { useState, useEffect } from "react";
-import { useFormDataStore } from "../../stores/useFormDataStore";
-import { VACANCY_COVERTATION_PHASES } from "../../const/Phases";
+import { useFormDataStore } from "../../../stores/useFormDataStore";
+import { VACANCY_COVERTATION_PHASES } from "../../../const/Phases";
 
 const ESTADO_CIVIL_OPTIONS = [
   "Soltero/a",

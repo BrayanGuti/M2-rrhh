@@ -170,7 +170,6 @@ export const useChatStore = create((set, get) => ({
       set({
         extractedCVData: response.datos_extraidos,
         uploadToken: response.token_subida,
-        isProcessing: false,
       });
 
       setTimeout(() => {
@@ -186,7 +185,7 @@ export const useChatStore = create((set, get) => ({
 
         setTimeout(() => {
           addBotMessage("Ahora continuemos con los siguientes datos...");
-
+          setProcessing(false);
           // Avanzar a la siguiente fase
           setTimeout(() => {
             const hasNext = moveToNextPhase();

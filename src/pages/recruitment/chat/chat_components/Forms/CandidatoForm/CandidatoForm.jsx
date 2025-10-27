@@ -1,7 +1,7 @@
 // chat_components/Forms/CandidatoForm.jsx
 import { useState, useEffect } from "react";
-import { useFormDataStore } from "../../stores/useFormDataStore";
-import { VACANCY_COVERTATION_PHASES } from "../../const/Phases";
+import { useFormDataStore } from "../../../stores/useFormDataStore";
+import { VACANCY_COVERTATION_PHASES } from "../../../const/Phases";
 
 // Función para calcular edad desde fecha de nacimiento
 const calculateAge = (birthDate) => {

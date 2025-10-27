@@ -1,8 +1,8 @@
 // chat_components/Forms/DatosPostulacionForm.jsx
 import { useState, useEffect } from "react";
-import { useFormDataStore } from "../../stores/useFormDataStore";
-import { getCurrentDateISO } from "../../services/dateUtils";
-import { VACANCY_COVERTATION_PHASES } from "../../const/Phases";
+import { useFormDataStore } from "../../../stores/useFormDataStore";
+import { getCurrentDateISO } from "../../../services/dateUtils";
+import { VACANCY_COVERTATION_PHASES } from "../../../const/Phases";
 
 const POSITIONS = [
   "Recepcionista",
