@@ -3,20 +3,7 @@ import { useState, useEffect } from "react";
 import { useFormDataStore } from "../../../stores/useFormDataStore";
 import { getCurrentDateISO } from "../../../services/dateUtils";
 import { VACANCY_COVERTATION_PHASES } from "../../../const/Phases";
-
-const POSITIONS = [
-  "Recepcionista",
-  "Botones",
-  "Camarero/a",
-  "Chef",
-  "Ayudante de cocina",
-  "Housekeeping",
-  "Gerente de hotel",
-  "Contador/a",
-  "Seguridad",
-  "Mantenimiento",
-  "Líder de Compra",
-];
+import { POSITIONS } from "../../../../../../const/Positions";
 
 export function DatosPostulacionForm() {
   const { formData, setSection, validateSection } = useFormDataStore();
