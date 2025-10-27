@@ -17,7 +17,8 @@ export function MessageList() {
     currentStep === VACANCY_COVERTATION_PHASES.form_referencias_personales ||
     currentStep === VACANCY_COVERTATION_PHASES.form_datos_generales ||
     currentStep === VACANCY_COVERTATION_PHASES.form_datos_economicos ||
-    currentStep === VACANCY_COVERTATION_PHASES.form_tallas;
+    currentStep === VACANCY_COVERTATION_PHASES.form_tallas ||
+    currentStep === VACANCY_COVERTATION_PHASES.form_resumen;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

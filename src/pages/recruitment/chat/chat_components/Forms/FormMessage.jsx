@@ -1,6 +1,3 @@
-// chat_components/FormMessage.jsx
-// Este componente se usa para mostrar formularios dentro de los mensajes del bot
-
 import { DatosPostulacionForm } from "./DatosPostulacionForm/DatosPostulacionForm";
 import { CandidatoForm } from "./CandidatoForm/CandidatoForm";
 import { useChatStore } from "../../stores/useChatStore";
@@ -13,10 +10,11 @@ import { ReferenciasPersonalesForm } from "./ReferenciasPersonalesForm/Referenci
 import { DatosGeneralesForm } from "./DatosGeneralesForm/DatosGeneralesForm";
 import { DatosEconomicosForm } from "./DatosEconomicosForm/DatosEconomicosForm";
 import { TallasForm } from "./TallasForm/TallasForm";
+import { FormSummary } from "./FormSummary/FormSummary";
 
 export function FormMessage() {
   const { currentStep } = useChatStore();
-  console.log("Current Step in FormMessage:", currentStep);
+  console.log("Current Step:", currentStep);
 
   if (currentStep === VACANCY_COVERTATION_PHASES.form_datos_postulacion) {
     return <DatosPostulacionForm />;
@@ -54,6 +52,10 @@ export function FormMessage() {
   }
   if (currentStep === VACANCY_COVERTATION_PHASES.form_tallas) {
     return <TallasForm />;
+  }
+
+  if (currentStep === VACANCY_COVERTATION_PHASES.form_resumen) {
+    return <FormSummary />;
   }
 
   return null;

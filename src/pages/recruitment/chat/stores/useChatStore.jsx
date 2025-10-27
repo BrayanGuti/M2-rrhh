@@ -33,7 +33,7 @@ const VACANCY_COVERTATION_PHASES_FLOW = [
   { id: VACANCY_COVERTATION_PHASES.form_datos_generales },
   { id: VACANCY_COVERTATION_PHASES.form_datos_economicos },
   { id: VACANCY_COVERTATION_PHASES.form_tallas },
-  // Aquí irán más fases cuando las implementes
+  { id: VACANCY_COVERTATION_PHASES.form_resumen },
 ];
 
 const APPOINTMENT_PHASES = [
@@ -50,6 +50,7 @@ export const useChatStore = create((set, get) => ({
   currentPhaseIndex: 0, // Índice de la fase actual
   messages: initialMessages,
   isProcessing: false,
+  returningToSummary: false,
 
   // === FUNCIONES PARA MENSAJES ===
 
@@ -97,7 +98,28 @@ export const useChatStore = create((set, get) => ({
 
   // Avanzar a la siguiente fase
   moveToNextPhase: () => {
-    const { currentPhaseIndex, getCurrentFlowPhases } = get();
+    const { currentPhaseIndex, getCurrentFlowPhases, returningToSummary } =
+      get();
+
+    // Si venimos del resumen (modo edición), regresar al resumen
+    if (returningToSummary) {
+      const phases = getCurrentFlowPhases();
+      const resumenIndex = phases.findIndex(
+        (p) => p.id === VACANCY_COVERTATION_PHASES.form_resumen
+      );
+
+      if (resumenIndex !== -1) {
+        set({
+          currentPhaseIndex: resumenIndex,
+          currentPhase: VACANCY_COVERTATION_PHASES.form_resumen,
+          currentStep: VACANCY_COVERTATION_PHASES.form_resumen,
+          returningToSummary: false,
+        });
+        return true;
+      }
+    }
+
+    // Lógica normal: avanzar a la siguiente fase
     const phases = getCurrentFlowPhases();
     const nextIndex = currentPhaseIndex + 1;
 
@@ -109,10 +131,24 @@ export const useChatStore = create((set, get) => ({
       });
       return true;
     }
+
     return false; // No hay más fases
   },
-
   // === MANEJO DE FLUJO DE VACANTES ===
+
+  setCurrentStep: (step) => {
+    const phases = get().getCurrentFlowPhases();
+    const phaseIndex = phases.findIndex((p) => p.id === step);
+
+    if (phaseIndex !== -1) {
+      set({
+        currentPhaseIndex: phaseIndex,
+        currentPhase: phases[phaseIndex].id,
+        currentStep: phases[phaseIndex].id,
+        returningToSummary: true,
+      });
+    }
+  },
 
   selectVacancy: () => {
     const { addUserMessage, addBotMessage, setStep } = get();

@@ -4,6 +4,7 @@ import {
   InitialMenuButtons,
   UploadCvButtons,
   ContinueForm,
+  SubmitApplicationButton,
 } from "./ActionButtonComponents";
 import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
 
@@ -62,6 +63,9 @@ export function ActionButtonArea() {
 
       case VACANCY_COVERTATION_PHASES.form_datos_economicos:
         return <ContinueForm isFormValid={validateCurrentForm} />;
+
+      case VACANCY_COVERTATION_PHASES.form_resumen:
+        return <SubmitApplicationButton />;
 
       default:
         return null;

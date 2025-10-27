@@ -10,4 +10,5 @@ export const VACANCY_COVERTATION_PHASES = {
   form_datos_generales: "datos_generales",
   form_datos_economicos: "datos_economicos",
   form_tallas: "tallas",
+  form_resumen: "form-resumen",
 };

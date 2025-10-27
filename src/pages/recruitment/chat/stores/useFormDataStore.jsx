@@ -67,6 +67,80 @@ export const useFormDataStore = create((set, get) => ({
     return validator(sectionData);
   },
 
+  // === VALIDACIÓN GLOBAL Y SUBMIT ===
+
+  /**
+   * Valida todas las secciones del formulario
+   * @returns {Object} { isValid: boolean, errorsBySections: {}, totalErrors: number }
+   */
+  validateAllSections: () => {
+    const formData = get().formData;
+    const allErrors = {};
+    let totalErrors = 0;
+
+    // Validar cada sección
+    Object.entries(FORM_VALIDATORS).forEach(([phaseKey, validator]) => {
+      const sectionKey = phaseKey.replace("form-", "").replace(/-/g, "_");
+
+      let result;
+
+      // Caso especial: informacion_familiar necesita detalles_personales
+      if (sectionKey === "informacion_familiar") {
+        result = validator(
+          formData.informacion_familiar,
+          formData.detalles_personales
+        );
+      } else {
+        result = validator(formData[sectionKey]);
+      }
+
+      if (!result.isValid) {
+        allErrors[phaseKey] = result.errors;
+        totalErrors += Object.keys(result.errors).length;
+      }
+    });
+
+    return {
+      isValid: Object.keys(allErrors).length === 0,
+      errorsBySections: allErrors,
+      totalErrors,
+    };
+  },
+
+  /**
+   * Envía la aplicación al servidor
+   * @returns {Promise<Object>} Respuesta del servidor
+   */
+  submitApplication: async () => {
+    const fullFormData = get().formData;
+
+    try {
+      const response = await fetch("/api/submit/application", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(fullFormData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return {
+        success: true,
+        data,
+      };
+    } catch (error) {
+      console.error("Error al enviar la aplicación:", error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  },
+
   /**
    * Convierte un currentStep (formato: "form-datos-postulacion")
    * al nombre de sección en formData (formato: "datos_postulacion")
