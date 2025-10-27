@@ -12,6 +12,10 @@ export const validateDatosPostulacion = (data) => {
     errors.puesto_aspirado = "Debes seleccionar un puesto";
   }
 
+  if (!data.sede) {
+    errors.sede = "Debes seleccionar una sede";
+  }
+
   if (!data.sueldo_deseado || data.sueldo_deseado <= 0) {
     errors.sueldo_deseado = "Debes ingresar un sueldo válido";
   }

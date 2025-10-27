@@ -174,7 +174,6 @@ async function uploadCVReal(file) {
     const response = await fetch(`${API_BASE_URL}/api/submit/cv-extract`, {
       method: "POST",
       body: formData,
-      // No enviar Content-Type, el browser lo maneja automáticamente con boundary
     });
 
     if (!response.ok) {

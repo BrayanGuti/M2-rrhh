@@ -4,6 +4,7 @@ export const initialFormData = {
     fecha_solicitud: "",
     puesto_aspirado: "",
     sueldo_deseado: 0,
+    sede: "",
   },
   candidato: {
     nombre_completo: "",

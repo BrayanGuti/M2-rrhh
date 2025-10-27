@@ -11,3 +11,15 @@ export const POSITIONS = [
   "Mantenimiento",
   "Líder de Compra",
 ];
+export const SEDES = [
+  "Alto Prado",
+  "Medellín",
+  "Cali",
+  "Barranquilla",
+  "Cartagena",
+  "Bucaramanga",
+  "Pereira",
+  "Manizales",
+  "Cúcuta",
+  "Ibagué",
+];

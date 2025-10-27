@@ -273,7 +273,6 @@ export const useChatStore = create((set, get) => ({
 
         setTimeout(() => {
           addBotMessage("Ahora continuemos con los siguientes datos...");
-          setProcessing(false);
 
           // Avanzar a la siguiente fase después de un momento
           setTimeout(() => {
@@ -281,6 +280,7 @@ export const useChatStore = create((set, get) => ({
             if (hasNext) {
               addBotMessage("Por favor, completa el siguiente formulario:");
             }
+            setProcessing(false);
           }, 1000);
         }, 2000);
       }, 1500);

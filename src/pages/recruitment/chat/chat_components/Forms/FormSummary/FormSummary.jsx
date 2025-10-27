@@ -252,6 +252,7 @@ const SECTIONS_CONFIG = [
     renderContent: (data) => (
       <>
         <Field label="Puesto aspirado" value={data?.puesto_aspirado} />
+        <Field label="Sede de preferencia" value={data?.sede} />
         <Field
           label="Sueldo deseado"
           value={

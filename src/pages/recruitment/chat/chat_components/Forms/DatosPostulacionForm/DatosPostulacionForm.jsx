@@ -3,7 +3,9 @@ import { useState, useEffect } from "react";
 import { useFormDataStore } from "../../../stores/useFormDataStore";
 import { getCurrentDateISO } from "../../../services/dateUtils";
 import { VACANCY_COVERTATION_PHASES } from "../../../const/Phases";
-import { POSITIONS } from "../../../../../../const/Positions";
+import { POSITIONS, SEDES } from "../../../../../../const/Positions";
+
+// Constante de sedes disponibles
 
 export function DatosPostulacionForm() {
   const { formData, setSection, validateSection } = useFormDataStore();
@@ -14,6 +16,7 @@ export function DatosPostulacionForm() {
     fecha_solicitud: formData.datos_postulacion.fecha_solicitud || currentDate,
     puesto_aspirado: formData.datos_postulacion.puesto_aspirado || "",
     sueldo_deseado: formData.datos_postulacion.sueldo_deseado || "",
+    sede: formData.datos_postulacion.sede || "",
   });
 
   const [errors, setErrors] = useState({});
@@ -85,6 +88,11 @@ export function DatosPostulacionForm() {
           localData={localData}
           errors={errors}
         />
+        <SedeSelect
+          handleChange={handleChange}
+          localData={localData}
+          errors={errors}
+        />
         <SueldoDeseadoInput
           handleChange={handleChange}
           localData={localData}
@@ -119,6 +127,33 @@ function PuestoAspiradoSelect({ handleChange, localData, errors }) {
         <p className="text-xs text-red-500 mt-1 animate-shake">
           {errors.puesto_aspirado}
         </p>
+      )}
+    </div>
+  );
+}
+
+function SedeSelect({ handleChange, localData, errors }) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-[#15616D] mb-2">
+        Sede de Preferencia <span className="text-red-500">*</span>
+      </label>
+      <select
+        value={localData.sede}
+        onChange={(e) => handleChange("sede", e.target.value)}
+        className={`w-full px-4 py-3 border rounded-lg text-[#15616D] focus:ring-2 focus:ring-[#44BBA4] focus:border-transparent transition-colors ${
+          errors.sede ? "border-red-500" : "border-gray-300"
+        }`}
+      >
+        <option value="">Selecciona una sede</option>
+        {SEDES.map((sede) => (
+          <option key={sede} value={sede}>
+            {sede}
+          </option>
+        ))}
+      </select>
+      {errors.sede && (
+        <p className="text-xs text-red-500 mt-1 animate-shake">{errors.sede}</p>
       )}
     </div>
   );
