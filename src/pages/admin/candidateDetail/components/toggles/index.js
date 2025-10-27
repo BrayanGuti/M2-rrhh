@@ -1,0 +1,8 @@
+export { DatosEconomicos } from "./datos-economicos";
+export { DatosGenerales } from "./datos-generales";
+export { DetallesPersonales } from "./detalles-personales";
+export { InformacionAcademica } from "./informacion-academica";
+export { InformacionFamiliar } from "./informacion-familiar";
+export { InformacionLaboral } from "./informacion-laboral";
+export { ReferenciasPersonales } from "./referencias-personales";
+export { Tallas } from "./tallas";

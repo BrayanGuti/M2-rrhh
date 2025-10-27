@@ -1,3 +1,5 @@
+import { DEBUG_MODE } from "../../../../const/config";
+
 const MOCK_CANDIDATES = [
   {
     id_postulacion: 1001,
@@ -200,11 +202,9 @@ const generateMockCandidates = (count) => {
 };
 
 const ALL_MOCK_DATA = generateMockCandidates(124);
-
-const API_BASE_URL = "/api/candidatos";
+const API_BASE_URL = import.meta.env.BACKEND_API_URL || "http://localhost:8000";
 
 // 🔧 DEBUG MODE: Cambiar a false para usar API real
-const DEBUG_MODE = true;
 
 const mockApiCall = async ({ page, limit, order, cargo }) => {
   // Agregar status aquí
@@ -270,7 +270,7 @@ export const candidatesApi = {
       params.append("cargo", cargo);
     }
 
-    const url = `${API_BASE_URL}/${endpoint}?${params.toString()}`;
+    const url = `${API_BASE_URL}/api/candidatos/${endpoint}?${params.toString()}`;
     console.log(`🔧 DEBUG MODE: Usando URL: ${url}`);
 
     if (DEBUG_MODE) {

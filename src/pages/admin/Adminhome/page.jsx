@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
-import { QueryClientProvider } from "@tanstack/react-query";
 import { AdminLayout } from "../layout/Layout";
 import { Filters } from "./components/Filters";
 import { PendingCandidatesList } from "./components/CandidatesTable";
 import { useCandidates } from "./hooks/useCandidates";
 import { FILTER_CONSTANTS } from "./constants/filters";
 import { POSITIONS } from "../../../const/Positions";
-import { queryClient } from "./config/queryClient";
 
 export function CandidatesListView({
   status = "pendiente",
@@ -69,9 +67,5 @@ export function CandidatesListView({
 
 // Página de pendientes
 export default function AdminHomePage() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <CandidatesListView status="pendiente" endpoint="pendientes" />
-    </QueryClientProvider>
-  );
+  return <CandidatesListView status="pendiente" endpoint="pendientes" />;
 }

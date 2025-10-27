@@ -3,6 +3,9 @@ import { lazy } from "react";
 // Lazy loading de componentes para optimizar carga inicial
 const AdminHome = lazy(() => import("../pages/admin/Adminhome/page.jsx"));
 const AdminContacts = lazy(() => import("../pages/admin/contacts/page.jsx"));
+const AdminCandidates = lazy(() =>
+  import("../pages/admin/candidateDetail/page.jsx")
+);
 
 /**
  * Rutas públicas de la aplicación
@@ -18,5 +21,9 @@ export const adminRoutes = [
   {
     path: "/admin/contactos",
     element: <AdminContacts />,
+  },
+  {
+    path: "/admin/candidatos/:id",
+    element: <AdminCandidates />,
   },
 ];

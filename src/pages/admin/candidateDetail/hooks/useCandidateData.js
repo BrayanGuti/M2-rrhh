@@ -1,9 +1,9 @@
 // hooks/useCandidateData.js
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { DEBUG_MODE } from "../../../../const/config.js";
 
 // ==================== CONFIGURATION ====================
-export const DEBUG_MODE = true;
 const API_BASE_URL = import.meta.env.BACKEND_API_URL || "http://localhost:8000";
 
 // Cache duration: 10 minutes

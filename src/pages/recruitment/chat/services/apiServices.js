@@ -1,11 +1,11 @@
 // services/apiServices.js
+import { DEBUG_MODE } from "../../../../const/config";
 
 // ============================================
 // CONFIGURACIÓN
 // ============================================
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-const USE_DEBUG_MODE = true; // Cambiar a false para usar backend real
+const API_BASE_URL = import.meta.env.BACKEND_API_URL || "http://localhost:8000";
 
 // ============================================
 // DATOS MOCK PARA DEBUG
@@ -201,7 +201,7 @@ async function uploadCVReal(file) {
  * @returns {Promise<Object>}
  */
 export async function uploadCV(file) {
-  return USE_DEBUG_MODE ? uploadCVDebug(file) : uploadCVReal(file);
+  return DEBUG_MODE ? uploadCVDebug(file) : uploadCVReal(file);
 }
 
 // ============================================
@@ -279,7 +279,7 @@ async function sendApplicationReal(applicationData) {
  */
 export async function sendApplication(applicationData) {
   try {
-    const data = USE_DEBUG_MODE
+    const data = DEBUG_MODE
       ? await sendApplicationDebug(applicationData)
       : await sendApplicationReal(applicationData);
 
