@@ -23,6 +23,7 @@ const initialMessages = [
 // Definición de fases lineales para cada flujo
 const VACANCY_COVERTATION_PHASES_FLOW = [
   { id: VACANCY_COVERTATION_PHASES.upload_cv },
+  { id: VACANCY_COVERTATION_PHASES.form_resumen },
   { id: VACANCY_COVERTATION_PHASES.form_datos_postulacion },
   { id: VACANCY_COVERTATION_PHASES.form_candidato },
   { id: VACANCY_COVERTATION_PHASES.form_detalles_personales },
@@ -33,7 +34,6 @@ const VACANCY_COVERTATION_PHASES_FLOW = [
   { id: VACANCY_COVERTATION_PHASES.form_datos_generales },
   { id: VACANCY_COVERTATION_PHASES.form_datos_economicos },
   { id: VACANCY_COVERTATION_PHASES.form_tallas },
-  { id: VACANCY_COVERTATION_PHASES.form_resumen },
 ];
 
 const APPOINTMENT_PHASES = [
@@ -51,6 +51,14 @@ export const useChatStore = create((set, get) => ({
   messages: initialMessages,
   isProcessing: false,
   returningToSummary: false,
+  submissionStatus: null, // null | 'sending' | 'success' | 'error'
+  submissionMessage: null,
+
+  setSubmissionStatus: (status, message) =>
+    set({ submissionStatus: status, submissionMessage: message }),
+
+  clearSubmissionStatus: () =>
+    set({ submissionStatus: null, submissionMessage: null }),
 
   // === FUNCIONES PARA MENSAJES ===
 
@@ -139,6 +147,14 @@ export const useChatStore = create((set, get) => ({
   setCurrentStep: (step) => {
     const phases = get().getCurrentFlowPhases();
     const phaseIndex = phases.findIndex((p) => p.id === step);
+    console.log(
+      "Setting current step to:",
+      step,
+      "Found phase index:",
+      phaseIndex,
+      "Phases:",
+      phases
+    );
 
     if (phaseIndex !== -1) {
       set({

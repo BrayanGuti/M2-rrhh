@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useFormDataStore } from "../../../stores/useFormDataStore";
 import { useChatStore } from "../../../stores/useChatStore";
+import { VACANCY_COVERTATION_PHASES } from "../../../const/Phases";
 import {
   ChevronDown,
   ChevronUp,
@@ -245,7 +246,7 @@ const SECTIONS_CONFIG = [
   {
     key: "datos_postulacion",
     dataKey: "datos_postulacion",
-    phaseKey: "form-datos-postulacion",
+    phaseKey: VACANCY_COVERTATION_PHASES.form_datos_postulacion,
     title: "Datos de Postulación",
     icon: Briefcase,
     renderContent: (data) => (
@@ -270,7 +271,7 @@ const SECTIONS_CONFIG = [
   {
     key: "candidato",
     dataKey: "candidato",
-    phaseKey: "form-candidato",
+    phaseKey: VACANCY_COVERTATION_PHASES.form_candidato,
     title: "Información Personal",
     icon: User,
     renderContent: (data) => (
@@ -289,7 +290,7 @@ const SECTIONS_CONFIG = [
   {
     key: "detalles_personales",
     dataKey: "detalles_personales",
-    phaseKey: "form-detalles-personales",
+    phaseKey: VACANCY_COVERTATION_PHASES.form_detalles_personales,
     title: "Detalles Personales",
     icon: Home,
     renderContent: (data) => (
@@ -320,7 +321,7 @@ const SECTIONS_CONFIG = [
   {
     key: "informacion_familiar",
     dataKey: "informacion_familiar",
-    phaseKey: "form-informacion-familiar",
+    phaseKey: VACANCY_COVERTATION_PHASES.form_informacion_familiar,
     title: "Información Familiar",
     icon: Users,
     renderContent: (data) => (
@@ -386,7 +387,7 @@ const SECTIONS_CONFIG = [
   {
     key: "informacion_academica",
     dataKey: "informacion_academica",
-    phaseKey: "form-informacion-academica",
+    phaseKey: VACANCY_COVERTATION_PHASES.form_informacion_academica,
     title: "Información Académica",
     icon: GraduationCap,
     renderContent: (data) => (
@@ -410,7 +411,7 @@ const SECTIONS_CONFIG = [
   {
     key: "informacion_laboral",
     dataKey: "informacion_laboral",
-    phaseKey: "form-informacion-laboral",
+    phaseKey: VACANCY_COVERTATION_PHASES.form_informacion_laboral,
     title: "Experiencia Laboral",
     icon: Building,
     renderContent: (data) => (
@@ -439,7 +440,7 @@ const SECTIONS_CONFIG = [
   {
     key: "referencias_personales",
     dataKey: "referencias_personales",
-    phaseKey: "form-referencias-personales",
+    phaseKey: VACANCY_COVERTATION_PHASES.form_referencias_personales,
     title: "Referencias Personales",
     icon: Phone,
     renderContent: (data) => (
@@ -465,7 +466,7 @@ const SECTIONS_CONFIG = [
   {
     key: "datos_generales",
     dataKey: "datos_generales",
-    phaseKey: "form-datos-generales",
+    phaseKey: VACANCY_COVERTATION_PHASES.form_datos_generales,
     title: "Datos Generales",
     icon: Info,
     renderContent: (data) => (
@@ -501,7 +502,7 @@ const SECTIONS_CONFIG = [
   {
     key: "datos_economicos",
     dataKey: "datos_economicos",
-    phaseKey: "form-datos-economicos",
+    phaseKey: VACANCY_COVERTATION_PHASES.form_datos_economicos,
     title: "Datos Económicos",
     icon: DollarSign,
     renderContent: (data) => (
@@ -534,7 +535,7 @@ const SECTIONS_CONFIG = [
   {
     key: "tallas",
     dataKey: "tallas",
-    phaseKey: "form-tallas",
+    phaseKey: VACANCY_COVERTATION_PHASES.form_tallas,
     title: "Tallas de Uniforme",
     icon: Shirt,
     renderContent: (data) => (

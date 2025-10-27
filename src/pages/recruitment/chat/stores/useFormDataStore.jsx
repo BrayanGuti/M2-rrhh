@@ -111,29 +111,54 @@ export const useFormDataStore = create((set, get) => ({
    * Envía la aplicación al servidor
    * @returns {Promise<Object>} Respuesta del servidor
    */
+  // submitApplication: async () => {
+  //   const fullFormData = get().formData;
+
+  //   try {
+  //     const response = await fetch("/api/submit/application", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(fullFormData),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error(`Error HTTP: ${response.status}`);
+  //     }
+
+  //     const data = await response.json();
+  //     return {
+  //       success: true,
+  //       data,
+  //     };
+  //   } catch (error) {
+  //     console.error("Error al enviar la aplicación:", error);
+  //     return {
+  //       success: false,
+  //       error: error.message,
+  //     };
+  //   }
+  // },
+
   submitApplication: async () => {
     const fullFormData = get().formData;
 
     try {
-      const response = await fetch("/api/submit/application", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(fullFormData),
-      });
+      console.log("Simulando envío de aplicación con datos:", fullFormData);
 
-      if (!response.ok) {
-        throw new Error(`Error HTTP: ${response.status}`);
-      }
+      // Simula un pequeño retardo de red
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const data = await response.json();
+      // Respuesta simulada
+      const data = { exito: true };
+
       return {
         success: true,
         data,
       };
     } catch (error) {
-      console.error("Error al enviar la aplicación:", error);
+      console.error("Error simulado al enviar la aplicación:", error);
       return {
         success: false,
         error: error.message,

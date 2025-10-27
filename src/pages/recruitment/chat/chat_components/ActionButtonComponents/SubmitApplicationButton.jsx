@@ -8,7 +8,8 @@ import { Send } from "lucide-react";
 export default function SubmitApplicationButton() {
   const { validateAllSections, submitApplication, resetForm } =
     useFormDataStore();
-  const { addBotMessage, setStep } = useChatStore();
+  const { addBotMessage, setStep, setSubmissionStatus, clearSubmissionStatus } =
+    useChatStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -24,7 +25,9 @@ export default function SubmitApplicationButton() {
         }
       }, 100);
 
-      addBotMessage(
+      // Mostrar error de validación DEBAJO del formulario
+      setSubmissionStatus(
+        "error",
         <>
           ❌ <strong>No puedo enviar tu aplicación todavía.</strong>
           <br />
@@ -39,8 +42,10 @@ export default function SubmitApplicationButton() {
 
     setIsSubmitting(true);
 
-    // Mensaje de envío
-    addBotMessage(
+    // Limpiar mensajes previos y mostrar "enviando"
+    clearSubmissionStatus();
+    setSubmissionStatus(
+      "sending",
       <>
         📤 Perfecto, estoy enviando tu aplicación...
         <br />
@@ -54,7 +59,9 @@ export default function SubmitApplicationButton() {
 
       if (result.success) {
         setTimeout(() => {
-          addBotMessage(
+          // Mostrar éxito
+          setSubmissionStatus(
+            "success",
             <>
               ✅ <strong>¡Aplicación enviada con éxito!</strong>
               <br />
@@ -68,8 +75,26 @@ export default function SubmitApplicationButton() {
             </>
           );
 
-          // Limpiar formulario y regresar al inicio después de 3 segundos
+          // Después de 3 segundos, limpiar el mensaje de éxito y continuar
           setTimeout(() => {
+            clearSubmissionStatus(); // Limpiar el mensaje de éxito
+            addBotMessage(
+              <div className="flex items-center gap-3 p-4 rounded-2xl border border-emerald-300 bg-white shadow-[0_4px_10px_rgba(16,185,129,0.2)]">
+                <div className="flex items-center justify-center w-10 h-10 bg-emerald-500 text-white rounded-full shadow-md">
+                  <span className="text-lg font-bold">✓</span>
+                </div>
+
+                <div className="leading-tight">
+                  <div className="font-semibold text-emerald-700 text-base">
+                    ¡Formulario completado!
+                  </div>
+                  <div className="text-sm text-emerald-600">
+                    Tu aplicación fue enviada correctamente 🎉
+                  </div>
+                </div>
+              </div>
+            );
+
             addBotMessage("¿Hay algo más en lo que te pueda ayudar?");
             resetForm();
             setStep("initial-menu");
@@ -78,7 +103,8 @@ export default function SubmitApplicationButton() {
       } else {
         // Error al enviar
         setTimeout(() => {
-          addBotMessage(
+          setSubmissionStatus(
+            "error",
             <>
               ❌ <strong>Hubo un problema al enviar tu aplicación.</strong>
               <br />
@@ -96,7 +122,8 @@ export default function SubmitApplicationButton() {
     } catch (error) {
       console.error("Error inesperado al enviar:", error);
       setTimeout(() => {
-        addBotMessage(
+        setSubmissionStatus(
+          "error",
           <>
             ❌ <strong>Error inesperado.</strong>
             <br />

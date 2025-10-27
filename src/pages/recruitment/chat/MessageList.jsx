@@ -5,7 +5,13 @@ import { FormMessage } from "./chat_components/Forms/FormMessage";
 import { VACANCY_COVERTATION_PHASES } from "./const/Phases";
 
 export function MessageList() {
-  const { messages, isProcessing, currentStep } = useChatStore();
+  const {
+    messages,
+    isProcessing,
+    currentStep,
+    submissionStatus,
+    submissionMessage,
+  } = useChatStore();
   const messagesEndRef = useRef(null);
   const showForm =
     currentStep === VACANCY_COVERTATION_PHASES.form_datos_postulacion ||
@@ -22,7 +28,7 @@ export function MessageList() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isProcessing]);
+  }, [messages, isProcessing, submissionStatus]);
 
   return (
     <div
@@ -46,13 +52,28 @@ export function MessageList() {
         ))}
 
         {isProcessing && <BotTyping />}
+
         {showForm && !isProcessing && (
-          <div className="flex items-start gap-2 justify-start">
-            <BotAvatar />
-            <div className="max-w-[90%] w-full">
-              <FormMessage />
+          <>
+            {/* EL FORMULARIO */}
+            <div className="flex items-start gap-2 justify-start">
+              <BotAvatar />
+              <div className="max-w-[90%] w-full">
+                <FormMessage />
+              </div>
             </div>
-          </div>
+
+            {/* MENSAJE DE ESTADO DEBAJO DEL FORMULARIO */}
+            {submissionStatus && (
+              <div className="flex items-start gap-2 justify-start animate-fade-in">
+                <BotAvatar />
+                <SubmissionStatusMessage
+                  status={submissionStatus}
+                  message={submissionMessage}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
       <div ref={messagesEndRef} />
@@ -114,6 +135,25 @@ function MessageBubble({ message }) {
           minute: "2-digit",
         })}
       </div>
+    </div>
+  );
+}
+
+function SubmissionStatusMessage({ status, message }) {
+  // Diferentes estilos según el estado
+  const statusStyles = {
+    sending: "bg-blue-50 border-blue-200 text-blue-900",
+    success: "bg-green-50 border-green-200 text-green-900",
+    error: "bg-red-50 border-red-200 text-red-900",
+  };
+
+  return (
+    <div
+      className={`max-w-[80%] rounded-2xl rounded-bl-none px-5 py-3 shadow-md border-2 ${
+        statusStyles[status] || statusStyles.error
+      }`}
+    >
+      <div className="text-sm leading-relaxed">{message}</div>
     </div>
   );
 }
