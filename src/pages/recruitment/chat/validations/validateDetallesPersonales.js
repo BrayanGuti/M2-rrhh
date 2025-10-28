@@ -26,12 +26,24 @@ export const validateDetallesPersonales = (data) => {
     errors.barrio = "El barrio es requerido";
   }
 
+  if (!data.localidad || data.localidad.trim().length < 2) {
+    errors.localidad = "La localidad es requerida";
+  }
+
+  if (!data.tiempo_que_habita || data.tiempo_que_habita.trim().length < 2) {
+    errors.tiempo_que_habita = "El tiempo que habita es requerido";
+  }
+
   if (!data.con_quien_vive || data.con_quien_vive.trim().length < 2) {
     errors.con_quien_vive = "Debes indicar con quién vives";
   }
 
   if (!data.eps || data.eps.trim().length < 2) {
     errors.eps = "La EPS es requerida";
+  }
+
+  if (!data.afp || data.afp.trim().length < 2) {
+    errors.afp = "La AFP es requerida";
   }
 
   return {

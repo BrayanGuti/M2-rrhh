@@ -141,9 +141,9 @@ function MessageBubble({ message }) {
 
 function SubmissionStatusMessage({ status, message }) {
   const statusStyles = {
-    sending: "border-blue-200 text-blue-900",
-    success: "border-green-200 text-green-900",
-    error: "border-red-200 text-red-900",
+    sending: "border-blue-200 text-blue-900 bg-blue-50",
+    success: "border-green-200 text-green-900 bg-green-50",
+    error: "border-red-200 text-red-900 bg-red-50",
   };
 
   return (
