@@ -1,6 +1,6 @@
 // chat_components/ActionButtonComponents/ContinueForm.jsx
 import { useState } from "react";
-import { Button } from "../../../../../ui/button";
+import { Button } from "@/ui/button";
 import { useChatStore } from "../../stores/useChatStore";
 import { useFormDataStore } from "../../stores/useFormDataStore";
 

@@ -1,4 +1,4 @@
-import { Avatar, AvatarFallback } from "../../../ui/avatar";
+import { Avatar, AvatarFallback } from "@/ui/avatar";
 import { useEffect, useRef } from "react";
 import { useChatStore } from "./stores/useChatStore";
 import { FormMessage } from "./chat_components/Forms/FormMessage";

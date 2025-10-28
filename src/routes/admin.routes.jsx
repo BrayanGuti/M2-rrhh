@@ -1,34 +1,46 @@
 import { lazy } from "react";
+import { ProtectedRoute } from "./components/protectedRoute.jsx";
 
 // Lazy loading de componentes para optimizar carga inicial
-const AdminHome = lazy(() => import("../pages/admin/adminhome/page.jsx"));
-const AdminContacts = lazy(() => import("../pages/admin/contacts/page.jsx"));
-const AdminCandidates = lazy(() =>
-  import("../pages/admin/candidateDetail/page.jsx")
+const AdminHome = lazy(() =>
+  import("../pages/admin-panel/pages/adminhome/page")
 );
-const LoginPage = lazy(() => import("../pages/admin/login/page.jsx"));
+const AdminContacts = lazy(() =>
+  import("../pages/admin-panel/pages/contacts/page")
+);
+const AdminCandidates = lazy(() =>
+  import("../pages/admin-panel/pages/candidateDetail/page")
+);
 
 /**
- * Rutas públicas de la aplicación
+ * Rutas protegidas del administrador
  *
- * Estas rutas son accesibles sin autenticación.
- * Cada ruta puede tener su propio layout y componentes hijos.
+ * Todas estas rutas requieren autenticación.
+ * Si el usuario no tiene token, será redirigido al login.
  */
 export const adminRoutes = [
   {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
     path: "/admin",
-    element: <AdminHome />,
+    element: (
+      <ProtectedRoute>
+        <AdminHome />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/admin/contactos",
-    element: <AdminContacts />,
+    element: (
+      <ProtectedRoute>
+        <AdminContacts />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/admin/candidatos/:id",
-    element: <AdminCandidates />,
+    element: (
+      <ProtectedRoute>
+        <AdminCandidates />
+      </ProtectedRoute>
+    ),
   },
 ];

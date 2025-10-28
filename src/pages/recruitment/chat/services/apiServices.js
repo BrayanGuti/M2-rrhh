@@ -1,5 +1,5 @@
 // services/apiServices.js
-import { DEBUG_MODE } from "../../../../const/config";
+import { DEBUG_MODE } from "@/const/config";
 
 // ============================================
 // CONFIGURACIÓN

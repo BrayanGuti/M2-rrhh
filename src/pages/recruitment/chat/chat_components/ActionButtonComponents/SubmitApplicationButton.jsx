@@ -1,6 +1,6 @@
 // chat_components/ActionButtonComponents/SubmitApplicationButton.jsx
 import { useState } from "react";
-import { Button } from "../../../../../ui/button";
+import { Button } from "@/ui/button";
 import { useFormDataStore } from "../../stores/useFormDataStore";
 import { useChatStore } from "../../stores/useChatStore";
 import { Send } from "lucide-react";
