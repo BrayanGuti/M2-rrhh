@@ -3,11 +3,28 @@ export function InformacionFamiliar({ informacion }) {
     return <p className="text-gray-500 text-sm">Sin información registrada</p>;
   }
 
+  // 🔍 Validar cada sección correctamente
+  const conyugeValido =
+    informacion.conyuge &&
+    (informacion.conyuge.nombre ||
+      informacion.conyuge.edad ||
+      informacion.conyuge.ocupacion);
+
+  const hijosValidos =
+    informacion.hijos?.filter((h) => h.nombre || h.edad || h.ocupacion) || [];
+
+  const padresValidos =
+    informacion.padres?.filter((p) => p.nombre || p.edad || p.ocupacion) || [];
+
+  const hermanosValidos =
+    informacion.hermanos?.filter((h) => h.nombre || h.edad || h.ocupacion) ||
+    [];
+
   const hasData =
-    informacion.conyuge ||
-    (informacion.hijos && informacion.hijos.length > 0) ||
-    (informacion.padres && informacion.padres.length > 0) ||
-    (informacion.hermanos && informacion.hermanos.length > 0);
+    conyugeValido ||
+    hijosValidos.length > 0 ||
+    padresValidos.length > 0 ||
+    hermanosValidos.length > 0;
 
   if (!hasData) {
     return <p className="text-gray-500 text-sm">Sin información registrada</p>;
@@ -16,7 +33,7 @@ export function InformacionFamiliar({ informacion }) {
   return (
     <div className="space-y-6">
       {/* Cónyuge */}
-      {informacion.conyuge && (
+      {conyugeValido && (
         <div>
           <h4 className="font-semibold text-gray-800 mb-3 text-sm">Cónyuge</h4>
           <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
@@ -24,19 +41,21 @@ export function InformacionFamiliar({ informacion }) {
               <div>
                 <p className="text-xs text-gray-500 mb-1">Nombre</p>
                 <p className="font-medium text-gray-800">
-                  {informacion.conyuge.nombre}
+                  {informacion.conyuge.nombre || "—"}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 mb-1">Edad</p>
                 <p className="font-medium text-gray-800">
-                  {informacion.conyuge.edad} años
+                  {informacion.conyuge.edad
+                    ? `${informacion.conyuge.edad} años`
+                    : "—"}
                 </p>
               </div>
               <div>
                 <p className="text-xs text-gray-500 mb-1">Ocupación</p>
                 <p className="font-medium text-gray-800">
-                  {informacion.conyuge.ocupacion}
+                  {informacion.conyuge.ocupacion || "—"}
                 </p>
               </div>
             </div>
@@ -45,11 +64,11 @@ export function InformacionFamiliar({ informacion }) {
       )}
 
       {/* Hijos */}
-      {informacion.hijos && informacion.hijos.length > 0 && (
+      {hijosValidos.length > 0 && (
         <div>
           <h4 className="font-semibold text-gray-800 mb-3 text-sm">Hijos</h4>
           <div className="space-y-3">
-            {informacion.hijos.map((hijo, index) => (
+            {hijosValidos.map((hijo, index) => (
               <div
                 key={index}
                 className="bg-gray-50 rounded-xl p-4 border border-gray-200"
@@ -57,18 +76,20 @@ export function InformacionFamiliar({ informacion }) {
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Nombre</p>
-                    <p className="font-medium text-gray-800">{hijo.nombre}</p>
+                    <p className="font-medium text-gray-800">
+                      {hijo.nombre || "—"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Edad</p>
                     <p className="font-medium text-gray-800">
-                      {hijo.edad} años
+                      {hijo.edad ? `${hijo.edad} años` : "—"}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Ocupación</p>
                     <p className="font-medium text-gray-800">
-                      {hijo.ocupacion}
+                      {hijo.ocupacion || "—"}
                     </p>
                   </div>
                 </div>
@@ -79,11 +100,11 @@ export function InformacionFamiliar({ informacion }) {
       )}
 
       {/* Padres */}
-      {informacion.padres && informacion.padres.length > 0 && (
+      {padresValidos.length > 0 && (
         <div>
           <h4 className="font-semibold text-gray-800 mb-3 text-sm">Padres</h4>
           <div className="space-y-3">
-            {informacion.padres.map((padre, index) => (
+            {padresValidos.map((padre, index) => (
               <div
                 key={index}
                 className="bg-gray-50 rounded-xl p-4 border border-gray-200"
@@ -91,18 +112,20 @@ export function InformacionFamiliar({ informacion }) {
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Nombre</p>
-                    <p className="font-medium text-gray-800">{padre.nombre}</p>
+                    <p className="font-medium text-gray-800">
+                      {padre.nombre || "—"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Edad</p>
                     <p className="font-medium text-gray-800">
-                      {padre.edad} años
+                      {padre.edad ? `${padre.edad} años` : "—"}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Ocupación</p>
                     <p className="font-medium text-gray-800">
-                      {padre.ocupacion}
+                      {padre.ocupacion || "—"}
                     </p>
                   </div>
                 </div>
@@ -113,11 +136,11 @@ export function InformacionFamiliar({ informacion }) {
       )}
 
       {/* Hermanos */}
-      {informacion.hermanos && informacion.hermanos.length > 0 && (
+      {hermanosValidos.length > 0 && (
         <div>
           <h4 className="font-semibold text-gray-800 mb-3 text-sm">Hermanos</h4>
           <div className="space-y-3">
-            {informacion.hermanos.map((hermano, index) => (
+            {hermanosValidos.map((hermano, index) => (
               <div
                 key={index}
                 className="bg-gray-50 rounded-xl p-4 border border-gray-200"
@@ -126,19 +149,19 @@ export function InformacionFamiliar({ informacion }) {
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Nombre</p>
                     <p className="font-medium text-gray-800">
-                      {hermano.nombre}
+                      {hermano.nombre || "—"}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Edad</p>
                     <p className="font-medium text-gray-800">
-                      {hermano.edad} años
+                      {hermano.edad ? `${hermano.edad} años` : "—"}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Ocupación</p>
                     <p className="font-medium text-gray-800">
-                      {hermano.ocupacion}
+                      {hermano.ocupacion || "—"}
                     </p>
                   </div>
                 </div>

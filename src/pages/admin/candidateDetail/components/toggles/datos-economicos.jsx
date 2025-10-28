@@ -46,7 +46,11 @@ export function DatosEconomicos({ datos }) {
         <div>
           <p className="text-xs text-gray-500 mb-1">Gastos Mensuales</p>
           <p className="font-medium text-gray-800">
-            ${datos.gastos_mensuales.toLocaleString("es-CO")}
+            {new Intl.NumberFormat("es-CO", {
+              style: "currency",
+              currency: "COP",
+              minimumFractionDigits: 0,
+            }).format(Number(datos.gastos_mensuales))}
           </p>
         </div>
       )}

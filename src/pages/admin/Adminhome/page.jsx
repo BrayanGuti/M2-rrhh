@@ -67,5 +67,5 @@ export function CandidatesListView({
 
 // Página de pendientes
 export default function AdminHomePage() {
-  return <CandidatesListView status="pendiente" endpoint="pendientes" />;
+  return <CandidatesListView status="pendiente" />;
 }

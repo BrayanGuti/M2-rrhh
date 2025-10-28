@@ -7,7 +7,6 @@ export function useCandidates({
   order,
   cargo,
   status = "pendiente",
-  endpoint = "pendientes",
 }) {
   return useQuery({
     queryKey: ["candidates", page, limit, order, cargo, status],
@@ -18,7 +17,6 @@ export function useCandidates({
         order,
         cargo,
         status,
-        endpoint,
       }),
   });
 }

@@ -202,7 +202,8 @@ const generateMockCandidates = (count) => {
 };
 
 const ALL_MOCK_DATA = generateMockCandidates(124);
-const API_BASE_URL = import.meta.env.BACKEND_API_URL || "http://localhost:8000";
+const API_BASE_URL =
+  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
 
 // 🔧 DEBUG MODE: Cambiar a false para usar API real
 
@@ -257,7 +258,6 @@ export const candidatesApi = {
     order = "DESC",
     cargo = "",
     status = "pendiente",
-    endpoint = "pendientes",
   }) => {
     const params = new URLSearchParams({
       pagina: page.toString(),
@@ -270,7 +270,7 @@ export const candidatesApi = {
       params.append("cargo", cargo);
     }
 
-    const url = `${API_BASE_URL}/api/candidatos/${endpoint}?${params.toString()}`;
+    const url = `${API_BASE_URL}/api/candidatos/?${params.toString()}`;
     console.log(`🔧 DEBUG MODE: Usando URL: ${url}`);
 
     if (DEBUG_MODE) {
@@ -278,7 +278,14 @@ export const candidatesApi = {
       return mockApiCall({ page, limit, order, cargo, status });
     }
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTAiLCJyb2xfaWQiOiIxIiwiaWF0IjoxNzYxNjIzNTU2LCJleHAiOjE3NjE2NTIzNTZ9.3ZeAjOC8D6SkUjGO6BVbQBRLgJGZhLgK2J858B3gYmI",
+      },
+    });
 
     if (!response.ok) {
       throw new Error("Error al obtener candidatos");

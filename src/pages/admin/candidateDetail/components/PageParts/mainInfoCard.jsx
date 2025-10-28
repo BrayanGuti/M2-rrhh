@@ -42,7 +42,11 @@ export function MainInfoCard({ datosPostulacion, candidato }) {
           <div>
             <p className="text-xs text-gray-500 mb-1">Sueldo Deseado</p>
             <p className="font-semibold text-gray-800">
-              ${datosPostulacion.sueldo_deseado.toLocaleString("es-CO")}
+              {new Intl.NumberFormat("es-CO", {
+                style: "currency",
+                currency: "COP",
+                minimumFractionDigits: 0,
+              }).format(Number(datosPostulacion.sueldo_deseado))}
             </p>
           </div>
         </div>

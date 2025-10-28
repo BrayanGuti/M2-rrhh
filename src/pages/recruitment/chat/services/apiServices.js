@@ -3,9 +3,11 @@ import { DEBUG_MODE } from "../../../../const/config";
 
 // ============================================
 // CONFIGURACIÓN
-// ============================================
+//  co===============
+// =============================
 
-const API_BASE_URL = import.meta.env.BACKEND_API_URL || "http://localhost:8000";
+const API_BASE_URL =
+  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
 
 // ============================================
 // DATOS MOCK PARA DEBUG
@@ -200,6 +202,8 @@ async function uploadCVReal(file) {
  * @returns {Promise<Object>}
  */
 export async function uploadCV(file) {
+  console.log(`${API_BASE_URL}/api/submit/cv-extract`);
+
   return DEBUG_MODE ? uploadCVDebug(file) : uploadCVReal(file);
 }
 

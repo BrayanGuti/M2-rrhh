@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { DEBUG_MODE } from "../../../../const/config.js";
 
 // ==================== CONFIGURATION ====================
-const API_BASE_URL = import.meta.env.BACKEND_API_URL || "http://localhost:8000";
+const API_BASE_URL =
+  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
 
 // Cache duration: 10 minutes
 const CACHE_DURATION = 10 * 60 * 1000;
@@ -169,7 +170,10 @@ const mockResponses = {
 };
 
 // ==================== CACHE UTILITIES ====================
-const getCacheKey = (id, section) => `candidate_${id}_${section}`;
+const getCacheKey = (id, section, type = "candidato") => {
+  // Para la petición básica usamos postulacion, para las demás usamos candidato
+  return `${type}_${id}_${section}`;
+};
 
 const saveToCache = (key, data) => {
   try {
@@ -215,12 +219,13 @@ const getFromCache = (key) => {
 // ==================== API UTILITIES ====================
 const simulateDelay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const fetchWithDebug = async (endpoint, delay = 800) => {
+const fetchWithDebug = async (endpoint, delay = 800, isBasicInfo = false) => {
   const sectionName = endpoint.split("/").pop();
   const startTime = Date.now();
 
   if (DEBUG_MODE) {
-    console.log(`[FETCH] 🔄 Starting: ${sectionName}`);
+    const idType = isBasicInfo ? "postulacionId" : "candidatoId";
+    console.log(`[FETCH] 🔄 Starting: ${sectionName} (using ${idType})`);
   }
 
   if (DEBUG_MODE) {
@@ -240,7 +245,16 @@ const fetchWithDebug = async (endpoint, delay = 800) => {
   }
 
   // Real API call
-  const response = await fetch(`${API_BASE_URL}${endpoint}`);
+  console.log(`${API_BASE_URL}${endpoint}`);
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTAiLCJyb2xfaWQiOiIxIiwiaWF0IjoxNzYxNjIzNTU2LCJleHAiOjE3NjE2NTIzNTZ9.3ZeAjOC8D6SkUjGO6BVbQBRLgJGZhLgK2J858B3gYmI",
+    },
+  });
+
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
@@ -251,24 +265,26 @@ const fetchWithDebug = async (endpoint, delay = 800) => {
 
 /**
  * Hook para obtener información básica del candidato (PRIORIDAD MÁXIMA)
+ * Usa postulacionId de la URL y retorna candidato_id
  */
-export const useCandidateBasicInfo = (id) => {
+export const useCandidateBasicInfo = (postulacionId) => {
   return useQuery({
-    queryKey: ["candidate", id, "basic"],
+    queryKey: ["candidate", postulacionId, "basic"],
     queryFn: async () => {
-      const cacheKey = getCacheKey(id, "basic");
+      const cacheKey = getCacheKey(postulacionId, "basic", "postulacion");
       const cached = getFromCache(cacheKey);
 
       if (cached) return cached;
 
       const data = await fetchWithDebug(
-        `/api/candidatos/pendientes/${id}`,
-        500
+        `/api/candidatos/${postulacionId}`,
+        500,
+        true // Indica que es petición básica con postulacionId
       );
       saveToCache(cacheKey, data);
       return data;
     },
-    enabled: !!id,
+    enabled: !!postulacionId,
     staleTime: STALE_TIME,
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
@@ -277,24 +293,26 @@ export const useCandidateBasicInfo = (id) => {
 
 /**
  * Hook para cargar secciones individuales con cache y retry
+ * Usa candidatoId extraído de la respuesta básica
  */
-export const useCandidateSection = (id, section, enabled = true) => {
+export const useCandidateSection = (candidatoId, section, enabled = true) => {
   return useQuery({
-    queryKey: ["candidate", id, section],
+    queryKey: ["candidate", candidatoId, section],
     queryFn: async () => {
-      const cacheKey = getCacheKey(id, section);
+      const cacheKey = getCacheKey(candidatoId, section, "candidato");
       const cached = getFromCache(cacheKey);
 
       if (cached) return cached;
 
       const data = await fetchWithDebug(
-        `/api/candidatos/pendientes/${id}/${section}`,
-        1000
+        `/api/candidatos/${candidatoId}/${section}`,
+        1000,
+        false // Indica que usa candidatoId
       );
       saveToCache(cacheKey, data);
       return data;
     },
-    enabled: !!id && enabled,
+    enabled: !!candidatoId && enabled,
     staleTime: STALE_TIME,
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
@@ -303,55 +321,75 @@ export const useCandidateSection = (id, section, enabled = true) => {
 
 /**
  * Hook compuesto con carga automática en lotes
+ * Recibe postulacionId de la URL
  */
-export const useCandidateDetail = (id) => {
+export const useCandidateDetail = (postulacionId) => {
   const [loadBatch2, setLoadBatch2] = useState(false);
   const [loadBatch3, setLoadBatch3] = useState(false);
   const queryClient = useQueryClient();
 
-  // Información básica (siempre se carga primero)
-  const basicQuery = useCandidateBasicInfo(id);
+  // Información básica (siempre se carga primero con postulacionId)
+  const basicQuery = useCandidateBasicInfo(postulacionId);
+
+  // Extraer candidatoId de la respuesta básica
+  const candidatoId = basicQuery.data?.candidato_id;
+
+  if (DEBUG_MODE && candidatoId) {
+    console.log(`[ID] 🎯 candidato_id extraído: ${candidatoId}`);
+  }
 
   // LOTE 1: Prioridad Alta (se carga inmediatamente después de basic)
+  // Ahora usa candidatoId en lugar de postulacionId
   const detallesQuery = useCandidateSection(
-    id,
+    candidatoId,
     "detalles_personales",
-    basicQuery.isSuccess
+    basicQuery.isSuccess && !!candidatoId
   );
   const familiarQuery = useCandidateSection(
-    id,
+    candidatoId,
     "informacion_familiar",
-    basicQuery.isSuccess
+    basicQuery.isSuccess && !!candidatoId
   );
   const academicaQuery = useCandidateSection(
-    id,
+    candidatoId,
     "informacion_academica",
-    basicQuery.isSuccess
+    basicQuery.isSuccess && !!candidatoId
   );
 
   // LOTE 2: Prioridad Media
   const laboralQuery = useCandidateSection(
-    id,
+    candidatoId,
     "informacion_laboral",
-    loadBatch2
+    loadBatch2 && !!candidatoId
   );
   const referenciasQuery = useCandidateSection(
-    id,
+    candidatoId,
     "referencias_personales",
-    loadBatch2
+    loadBatch2 && !!candidatoId
   );
-  const generalesQuery = useCandidateSection(id, "datos_generales", loadBatch2);
+  const generalesQuery = useCandidateSection(
+    candidatoId,
+    "datos_generales",
+    loadBatch2 && !!candidatoId
+  );
 
   // LOTE 3: Prioridad Baja
   const economicosQuery = useCandidateSection(
-    id,
+    candidatoId,
     "datos_economicos",
-    loadBatch3
+    loadBatch3 && !!candidatoId
   );
-  const tallasQuery = useCandidateSection(id, "tallas", loadBatch3);
+  const tallasQuery = useCandidateSection(
+    candidatoId,
+    "tallas",
+    loadBatch3 && !!candidatoId
+  );
 
   // Lógica de carga en cascada
   useEffect(() => {
+    // Solo proceder si tenemos candidatoId
+    if (!candidatoId) return;
+
     // Cuando el lote 1 termine (éxito o error), cargar lote 2
     const batch1Settled =
       (detallesQuery.isSuccess || detallesQuery.isError) &&
@@ -365,6 +403,7 @@ export const useCandidateDetail = (id) => {
       setLoadBatch2(true);
     }
   }, [
+    candidatoId,
     detallesQuery.isSuccess,
     detallesQuery.isError,
     familiarQuery.isSuccess,
@@ -375,6 +414,9 @@ export const useCandidateDetail = (id) => {
   ]);
 
   useEffect(() => {
+    // Solo proceder si tenemos candidatoId
+    if (!candidatoId) return;
+
     // Cuando el lote 2 termine, cargar lote 3
     const batch2Settled =
       loadBatch2 &&
@@ -389,6 +431,7 @@ export const useCandidateDetail = (id) => {
       setLoadBatch3(true);
     }
   }, [
+    candidatoId,
     loadBatch2,
     laboralQuery.isSuccess,
     laboralQuery.isError,
@@ -404,7 +447,7 @@ export const useCandidateDetail = (id) => {
     if (DEBUG_MODE) {
       console.log(`[RETRY] 🔄 Retrying section: ${section}`);
     }
-    queryClient.invalidateQueries(["candidate", id, section]);
+    queryClient.invalidateQueries(["candidate", candidatoId, section]);
   };
 
   // Función para reintentar todas las secciones fallidas
@@ -427,7 +470,7 @@ export const useCandidateDetail = (id) => {
     }
 
     failedSections.forEach((section) => {
-      queryClient.invalidateQueries(["candidate", id, section.name]);
+      queryClient.invalidateQueries(["candidate", candidatoId, section.name]);
     });
   };
 
@@ -455,6 +498,7 @@ export const useCandidateDetail = (id) => {
     tallas: tallasQuery,
 
     // Helpers
+    candidatoId, // Exponemos el candidatoId extraído por si se necesita
     isAnyLoading:
       basicQuery.isLoading ||
       detallesQuery.isLoading ||

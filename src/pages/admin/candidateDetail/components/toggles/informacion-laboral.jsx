@@ -1,4 +1,6 @@
 export function InformacionLaboral({ informacion }) {
+  console.log("Información Laboral:", informacion);
+
   if (!informacion || informacion.length === 0) {
     return <p className="text-gray-500 text-sm">Sin información registrada</p>;
   }
