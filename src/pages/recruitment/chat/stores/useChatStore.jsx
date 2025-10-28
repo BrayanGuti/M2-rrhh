@@ -31,12 +31,12 @@ const initialMessages = [
 
 const VACANCY_FLOW_PHASES = [
   { id: VACANCY_COVERTATION_PHASES.upload_cv },
+  { id: VACANCY_COVERTATION_PHASES.form_informacion_laboral },
   { id: VACANCY_COVERTATION_PHASES.form_datos_postulacion },
   { id: VACANCY_COVERTATION_PHASES.form_candidato },
   { id: VACANCY_COVERTATION_PHASES.form_detalles_personales },
   { id: VACANCY_COVERTATION_PHASES.form_informacion_familiar },
   { id: VACANCY_COVERTATION_PHASES.form_informacion_academica },
-  { id: VACANCY_COVERTATION_PHASES.form_informacion_laboral },
   { id: VACANCY_COVERTATION_PHASES.form_referencias_personales },
   { id: VACANCY_COVERTATION_PHASES.form_datos_generales },
   { id: VACANCY_COVERTATION_PHASES.form_datos_economicos },

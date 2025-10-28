@@ -1,0 +1,10 @@
+export { validateDatosPostulacion } from "./validateDatosPostulacion";
+export { validateCandidato } from "./validateCandidato";
+export { validateDetallesPersonales } from "./validateDetallesPersonales";
+export { validateInformacionAcademica } from "./validateInformacionAcademica";
+export { validateReferenciasPersonales } from "./validateReferenciasPersonales";
+export { validateDatosGenerales } from "./validateDatosGenerales";
+export { validateInformacionLaboral } from "./validateInformacionLaboral";
+export { validateTallas } from "./validateTallas";
+export { validateInformacionFamiliar } from "./validateInformacionFamiliar";
+export { validateDatosEconomicos } from "./validateDatosEconomicos";

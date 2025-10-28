@@ -39,8 +39,6 @@ export function InformacionLaboralForm() {
       // IMPORTANTE: Actualizar errores en el estado
       setErrors(result.errors);
 
-      // Log para debug
-
       return result.isValid;
     };
 
@@ -349,32 +347,44 @@ function ExperienciaCard({
           )}
         </div>
 
-        {/* Logros (Opcional) */}
+        {/* Logros (Ahora Obligatorio) */}
         <div>
           <label className="block text-xs sm:text-sm font-medium text-[#15616D] mb-1">
-            Logros (Opcional)
+            Logros *
           </label>
           <textarea
-            placeholder="Logros destacados durante tu experiencia..."
+            placeholder="Logros destacados durante tu experiencia... *"
             rows={2}
             value={experiencia.logros}
             onChange={(e) => onUpdate(index, "logros", e.target.value)}
-            className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-[#15616D] text-sm sm:text-base focus:ring-2 focus:ring-[#44BBA4] focus:border-transparent resize-none"
+            className={`w-full px-3 sm:px-4 py-2 border rounded-lg text-[#15616D] text-sm sm:text-base focus:ring-2 focus:ring-[#44BBA4] focus:border-transparent resize-none transition-colors ${
+              getError("logros") ? "border-red-500" : "border-gray-300"
+            }`}
           />
+          {getError("logros") && (
+            <p className="text-xs text-red-500 mt-1">{getError("logros")}</p>
+          )}
         </div>
 
-        {/* Dificultades (Opcional) */}
+        {/* Dificultades (Ahora Obligatorio) */}
         <div>
           <label className="block text-xs sm:text-sm font-medium text-[#15616D] mb-1">
-            Dificultades (Opcional)
+            Dificultades *
           </label>
           <textarea
-            placeholder="Dificultades enfrentadas..."
+            placeholder="Dificultades enfrentadas... *"
             rows={2}
             value={experiencia.dificultades}
             onChange={(e) => onUpdate(index, "dificultades", e.target.value)}
-            className="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg text-[#15616D] text-sm sm:text-base focus:ring-2 focus:ring-[#44BBA4] focus:border-transparent resize-none"
+            className={`w-full px-3 sm:px-4 py-2 border rounded-lg text-[#15616D] text-sm sm:text-base focus:ring-2 focus:ring-[#44BBA4] focus:border-transparent resize-none transition-colors ${
+              getError("dificultades") ? "border-red-500" : "border-gray-300"
+            }`}
           />
+          {getError("dificultades") && (
+            <p className="text-xs text-red-500 mt-1">
+              {getError("dificultades")}
+            </p>
+          )}
         </div>
       </div>
     </div>

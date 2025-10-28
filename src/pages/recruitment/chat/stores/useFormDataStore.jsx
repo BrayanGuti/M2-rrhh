@@ -13,7 +13,7 @@ import {
   validateInformacionFamiliar,
   validateInformacionLaboral,
   validateDatosEconomicos,
-} from "../validations/formValidations";
+} from "../validations";
 import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
 
 // ============================================
