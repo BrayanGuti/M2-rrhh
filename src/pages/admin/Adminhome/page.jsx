@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
 import { AdminLayout } from "../layout/Layout";
 import { Filters } from "./components/Filters";
-import { PendingCandidatesList } from "./components/CandidatesTable";
+import { CandidatesTable } from "./components/CandidatesTable";
 import { useCandidates } from "./hooks/useCandidates";
-import { FILTER_CONSTANTS } from "./constants/filters";
+import { FILTER_CONSTANTS, CANDIDATES_STATUS_CONFIG } from "./constants";
 import { POSITIONS } from "../../../const/Positions";
 
-export function CandidatesListView({
-  status = "pendiente",
-  endpoint = "pendientes",
-}) {
+export function CandidatesListView({ status = "pendiente" }) {
+  const config = CANDIDATES_STATUS_CONFIG[status];
+
   const [cargoFilter, setCargoFilter] = useState(
     FILTER_CONSTANTS.DEFAULT_CARGO
   );
@@ -24,7 +23,6 @@ export function CandidatesListView({
     order: ordenFilter,
     cargo: cargoFilter,
     status,
-    endpoint,
   });
 
   useEffect(() => {
@@ -53,13 +51,14 @@ export function CandidatesListView({
         onOrdenChange={handleOrdenChange}
         positions={POSITIONS}
       />
-      <PendingCandidatesList
+      <CandidatesTable
         candidates={data?.data}
         isLoading={isLoading}
         isError={isError}
         currentPage={currentPage}
         metadata={data?.metadatos}
         onPageChange={handlePageChange}
+        config={config}
       />
     </AdminLayout>
   );

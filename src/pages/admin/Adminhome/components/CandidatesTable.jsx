@@ -2,19 +2,20 @@ import { Button } from "../../../../ui/button";
 import { Card } from "../../../../ui/card";
 import { Eye, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
-export function PendingCandidatesList({
+export function CandidatesTable({
   candidates = [],
   metadata,
   onPageChange,
   isLoading,
   isError,
+  config,
 }) {
   if (isLoading) {
     return (
       <Card className="bg-white border-gray-200 rounded-2xl overflow-hidden shadow-md">
         <div className="flex items-center justify-center p-12">
           <Loader2 className="w-8 h-8 animate-spin text-[#44BBA4]" />
-          <span className="ml-3 text-gray-600">Cargando candidatos...</span>
+          <span className="ml-3 text-gray-600">{config.loadingMessage}</span>
         </div>
       </Card>
     );
@@ -41,7 +42,7 @@ export function PendingCandidatesList({
     return (
       <Card className="bg-white border-gray-200 rounded-2xl overflow-hidden shadow-md">
         <div className="flex items-center justify-center p-12">
-          <p className="text-gray-500">No hay candidatos pendientes</p>
+          <p className="text-gray-500">{config.emptyStateMessage}</p>
         </div>
       </Card>
     );
@@ -62,11 +63,10 @@ export function PendingCandidatesList({
   return (
     <Card className="bg-white border-gray-200 rounded-2xl overflow-hidden shadow-md">
       <div className="p-6 border-b border-gray-200">
-        <h2 className="text-xl font-bold text-gray-800">
-          Candidatos Pendientes
-        </h2>
+        <h2 className="text-xl font-bold text-gray-800">{config.title}</h2>
         <p className="text-sm text-gray-500 mt-1">
-          Mostrando {startIndex}-{endIndex} de {total_elementos} candidatos
+          Mostrando {startIndex}-{endIndex} de {total_elementos}{" "}
+          {config.itemLabel}
         </p>
       </div>
 
