@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useFormDataStore } from "../../../stores/useFormDataStore";
 import { getCurrentDateISO } from "../../../services/dateUtils";
 import { VACANCY_COVERTATION_PHASES } from "../../../const/Phases";
-import { POSITIONS, SEDES } from "../../../../../../const/Positions";
+import { POSITIONS, SEDES } from "../../../../../../const/positions";
 
 // Constante de sedes disponibles
 

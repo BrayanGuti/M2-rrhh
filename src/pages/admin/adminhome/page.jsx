@@ -4,7 +4,7 @@ import { Filters } from "./components/Filters";
 import { CandidatesTable } from "./components/CandidatesTable";
 import { useCandidates } from "./hooks/useCandidates";
 import { FILTER_CONSTANTS, CANDIDATES_STATUS_CONFIG } from "./constants";
-import { POSITIONS } from "../../../const/Positions";
+import { POSITIONS } from "../../../const/positions";
 
 export function CandidatesListView({ status = "pendiente" }) {
   const config = CANDIDATES_STATUS_CONFIG[status];

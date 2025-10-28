@@ -6,3 +6,4 @@ export { InformacionFamiliar } from "./informacion-familiar";
 export { InformacionLaboral } from "./informacion-laboral";
 export { ReferenciasPersonales } from "./referencias-personales";
 export { Tallas } from "./tallas";
+export { CVViewer } from "./CVViewer";

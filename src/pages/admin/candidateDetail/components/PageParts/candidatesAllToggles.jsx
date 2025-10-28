@@ -11,11 +11,13 @@ import {
   DatosGenerales,
   DatosEconomicos,
   Tallas,
+  CVViewer,
 } from "../toggles";
 
 export function CandidatesAllToggles({
   openSections,
   setOpenSections,
+  cv,
   detalles,
   familiar,
   academica,
@@ -25,6 +27,7 @@ export function CandidatesAllToggles({
   economicos,
   tallas,
   retrySection,
+  candidatoNombre,
 }) {
   return (
     <Accordion
@@ -33,6 +36,22 @@ export function CandidatesAllToggles({
       value={openSections}
       onValueChange={setOpenSections}
     >
+      {/* Sección de Hoja de Vida - LOTE 1 */}
+      <AccordionSection
+        value="hoja-de-vida"
+        title="Hoja de Vida"
+        isLoading={cv.isLoading}
+        hasError={!!cv.error}
+        onRetry={() => retrySection("cv")}
+      >
+        <CVViewer
+          pdfUrl={cv.pdfUrl}
+          isLoading={cv.isLoading}
+          error={cv.error}
+          candidatoNombre={candidatoNombre}
+        />
+      </AccordionSection>
+
       <AccordionSection
         value="detalles-personales"
         title="Detalles Personales"

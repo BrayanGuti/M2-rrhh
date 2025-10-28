@@ -11,6 +11,9 @@ const API_BASE_URL =
 const CACHE_DURATION = 10 * 60 * 1000;
 const STALE_TIME = 5 * 60 * 1000;
 
+// PDF Local para modo DEBUG - Coloca tu PDF en la carpeta public
+const LOCAL_PDF_PATH = "/mock.pdf";
+
 // ==================== MOCK DATA ====================
 const mockResponses = {
   basic: {
@@ -171,7 +174,6 @@ const mockResponses = {
 
 // ==================== CACHE UTILITIES ====================
 const getCacheKey = (id, section, type = "candidato") => {
-  // Para la petición básica usamos postulacion, para las demás usamos candidato
   return `${type}_${id}_${section}`;
 };
 
@@ -261,6 +263,48 @@ const fetchWithDebug = async (endpoint, delay = 800, isBasicInfo = false) => {
   return response.json();
 };
 
+// Fetch específico para PDFs (retorna Blob)
+const fetchPDFWithDebug = async (endpoint, delay = 1000) => {
+  const startTime = Date.now();
+
+  if (DEBUG_MODE) {
+    console.log(`[FETCH PDF] 🔄 Starting: Local PDF from ${LOCAL_PDF_PATH}`);
+    await simulateDelay(delay);
+
+    // Cargar PDF desde carpeta public (local)
+    const response = await fetch(LOCAL_PDF_PATH);
+    if (!response.ok) {
+      const elapsed = Date.now() - startTime;
+      console.log(`[FETCH PDF] ❌ Failed: Local PDF not found (${elapsed}ms)`);
+      throw new Error(`Failed to fetch local PDF from ${LOCAL_PDF_PATH}`);
+    }
+
+    const blob = await response.blob();
+    const elapsed = Date.now() - startTime;
+    console.log(`[FETCH PDF] ✅ Success: Local PDF loaded (${elapsed}ms)`);
+    return blob;
+  }
+
+  // Real API call
+  console.log(`${API_BASE_URL}${endpoint}`);
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    method: "GET",
+    headers: {
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTAiLCJyb2xfaWQiOiIxIiwiaWF0IjoxNzYxNjIzNTU2LCJleHAiOjE3NjE2NTIzNTZ9.3ZeAjOC8D6SkUjGO6BVbQBRLgJGZhLgK2J858B3gYmI",
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `HTTP error! status: ${response.status}`
+    );
+  }
+
+  return response.blob();
+};
+
 // ==================== CUSTOM HOOKS ====================
 
 /**
@@ -279,7 +323,7 @@ export const useCandidateBasicInfo = (postulacionId) => {
       const data = await fetchWithDebug(
         `/api/candidatos/${postulacionId}`,
         500,
-        true // Indica que es petición básica con postulacionId
+        true
       );
       saveToCache(cacheKey, data);
       return data;
@@ -289,6 +333,52 @@ export const useCandidateBasicInfo = (postulacionId) => {
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
+};
+
+/**
+ * Hook para obtener el CV/Hoja de Vida del candidato (PDF)
+ * Retorna un Blob que se mantiene en memoria durante la sesión
+ */
+export const useCandidateCV = (candidatoId, enabled = true) => {
+  const [pdfUrl, setPdfUrl] = useState(null);
+
+  const query = useQuery({
+    queryKey: ["candidate", candidatoId, "cv"],
+    queryFn: async () => {
+      const blob = await fetchPDFWithDebug(
+        `/api/candidatos/${candidatoId}/cv_adjunto`,
+        1200
+      );
+
+      // Crear URL del Blob para usar en iframe/window.open
+      const url = URL.createObjectURL(blob);
+      setPdfUrl(url);
+
+      return { blob, url };
+    },
+    enabled: !!candidatoId && enabled,
+    staleTime: Infinity, // El PDF no cambia durante la sesión
+    cacheTime: Infinity, // Mantener en caché de React Query
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
+
+  // Cleanup: revocar URL cuando el componente se desmonte
+  useEffect(() => {
+    return () => {
+      if (pdfUrl) {
+        URL.revokeObjectURL(pdfUrl);
+        if (DEBUG_MODE) {
+          console.log("[PDF] 🗑️ Blob URL revoked");
+        }
+      }
+    };
+  }, [pdfUrl]);
+
+  return {
+    ...query,
+    pdfUrl,
+  };
 };
 
 /**
@@ -307,7 +397,7 @@ export const useCandidateSection = (candidatoId, section, enabled = true) => {
       const data = await fetchWithDebug(
         `/api/candidatos/${candidatoId}/${section}`,
         1000,
-        false // Indica que usa candidatoId
+        false
       );
       saveToCache(cacheKey, data);
       return data;
@@ -339,7 +429,11 @@ export const useCandidateDetail = (postulacionId) => {
   }
 
   // LOTE 1: Prioridad Alta (se carga inmediatamente después de basic)
-  // Ahora usa candidatoId en lugar de postulacionId
+  // Incluye CV/Hoja de Vida
+  const cvQuery = useCandidateCV(
+    candidatoId,
+    basicQuery.isSuccess && !!candidatoId
+  );
   const detallesQuery = useCandidateSection(
     candidatoId,
     "detalles_personales",
@@ -387,11 +481,11 @@ export const useCandidateDetail = (postulacionId) => {
 
   // Lógica de carga en cascada
   useEffect(() => {
-    // Solo proceder si tenemos candidatoId
     if (!candidatoId) return;
 
     // Cuando el lote 1 termine (éxito o error), cargar lote 2
     const batch1Settled =
+      (cvQuery.isSuccess || cvQuery.isError) &&
       (detallesQuery.isSuccess || detallesQuery.isError) &&
       (familiarQuery.isSuccess || familiarQuery.isError) &&
       (academicaQuery.isSuccess || academicaQuery.isError);
@@ -404,6 +498,8 @@ export const useCandidateDetail = (postulacionId) => {
     }
   }, [
     candidatoId,
+    cvQuery.isSuccess,
+    cvQuery.isError,
     detallesQuery.isSuccess,
     detallesQuery.isError,
     familiarQuery.isSuccess,
@@ -414,7 +510,6 @@ export const useCandidateDetail = (postulacionId) => {
   ]);
 
   useEffect(() => {
-    // Solo proceder si tenemos candidatoId
     if (!candidatoId) return;
 
     // Cuando el lote 2 termine, cargar lote 3
@@ -453,6 +548,7 @@ export const useCandidateDetail = (postulacionId) => {
   // Función para reintentar todas las secciones fallidas
   const retryAllFailed = () => {
     const failedSections = [
+      { query: cvQuery, name: "cv" },
       { query: detallesQuery, name: "detalles_personales" },
       { query: familiarQuery, name: "informacion_familiar" },
       { query: academicaQuery, name: "informacion_academica" },
@@ -476,6 +572,7 @@ export const useCandidateDetail = (postulacionId) => {
 
   // Contar errores
   const errorCount = [
+    cvQuery,
     detallesQuery,
     familiarQuery,
     academicaQuery,
@@ -488,6 +585,7 @@ export const useCandidateDetail = (postulacionId) => {
 
   return {
     basic: basicQuery,
+    cv: cvQuery,
     detalles: detallesQuery,
     familiar: familiarQuery,
     academica: academicaQuery,
@@ -498,9 +596,10 @@ export const useCandidateDetail = (postulacionId) => {
     tallas: tallasQuery,
 
     // Helpers
-    candidatoId, // Exponemos el candidatoId extraído por si se necesita
+    candidatoId,
     isAnyLoading:
       basicQuery.isLoading ||
+      cvQuery.isLoading ||
       detallesQuery.isLoading ||
       familiarQuery.isLoading ||
       academicaQuery.isLoading ||

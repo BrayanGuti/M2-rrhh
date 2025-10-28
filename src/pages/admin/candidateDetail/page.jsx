@@ -25,6 +25,7 @@ export default function CandidatesDetailPage() {
 
   const {
     basic,
+    cv,
     detalles,
     familiar,
     academica,
@@ -47,6 +48,7 @@ export default function CandidatesDetailPage() {
   };
 
   const candidateData = basic.data;
+  const candidatoNombre = candidateData?.candidato?.nombre_completo;
 
   return (
     <CandidateLayoutState loading={basic.isLoading} error={basic.error}>
@@ -64,7 +66,6 @@ export default function CandidatesDetailPage() {
       <div className="space-y-6">
         {/* Banner de errores globales */}
         <ErrorBanner errorCount={errorCount} onRetryAll={retryAllFailed} />
-
         <MainInfoCard
           datosPostulacion={candidateData?.datos_postulacion}
           candidato={candidateData?.candidato}
@@ -73,6 +74,7 @@ export default function CandidatesDetailPage() {
         <CandidatesAllToggles
           openSections={openSections}
           setOpenSections={setOpenSections}
+          cv={cv}
           detalles={detalles}
           familiar={familiar}
           academica={academica}
@@ -82,6 +84,7 @@ export default function CandidatesDetailPage() {
           economicos={economicos}
           tallas={tallas}
           retrySection={retrySection}
+          candidatoNombre={candidatoNombre}
         />
 
         <ActionButtons
