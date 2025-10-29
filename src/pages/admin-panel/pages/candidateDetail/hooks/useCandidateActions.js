@@ -78,7 +78,6 @@ export function useCandidateActions(candidatoId) {
    * DELETE /api/candidatos/pendientes/{id}/rechazar
    */
   const handleReject = async (candidateName = "el candidato") => {
-    console.log("Rechazar candidato:", candidatoId);
     if (!candidatoId) {
       setModalState({
         isOpen: true,
@@ -99,13 +98,16 @@ export function useCandidateActions(candidatoId) {
         console.log("🔧 DEBUG MODE: Simulando rechazo de candidato");
         response = await simulateApiResponse("rechazar");
       } else {
-        response = await fetch({
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        response = await fetch(
+          `${API_BASE_URL}/api/candidatos/pendientes/${candidatoId}/rechazar`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
       }
 
       if (!response.ok) {

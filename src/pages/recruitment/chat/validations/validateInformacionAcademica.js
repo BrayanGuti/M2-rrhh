@@ -10,7 +10,11 @@ export const validateInformacionAcademica = (data) => {
     errors.formacion = "El nivel de formación es requerido";
   }
 
-  if (data.formacion !== "Primaria" && !data.titulo_obtenido) {
+  if (
+    data.formacion !== "Primaria" &&
+    data.formacion !== "Bachillerato" &&
+    !data.titulo_obtenido
+  ) {
     errors.titulo_obtenido = "El título obtenido es requerido";
   }
 
