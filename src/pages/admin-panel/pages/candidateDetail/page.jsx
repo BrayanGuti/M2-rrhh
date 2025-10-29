@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/ui/button.jsx";
 import { useCandidateDetail } from "./hooks/useCandidateData.js";
+import { useCandidateActions } from "./hooks/useCandidateActions.js";
 import {
   CandidatesAllToggles,
   MainInfoCard,
@@ -15,6 +16,7 @@ import {
   ScheduleInterviewDialog,
   ErrorBanner,
 } from "./components/helpers/index.js";
+import { ActionResultModal } from "./components/helpers/actionResultModal.jsx";
 import { DEBUG_MODE } from "@/const/config.js";
 
 export default function CandidatesDetailPage() {
@@ -23,6 +25,7 @@ export default function CandidatesDetailPage() {
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
   const [openSections, setOpenSections] = useState([]);
 
+  // Hook para obtener datos del candidato
   const {
     basic,
     cv,
@@ -39,16 +42,32 @@ export default function CandidatesDetailPage() {
     retryAllFailed,
   } = useCandidateDetail(id);
 
-  const handleAccept = () => setIsScheduleDialogOpen(true);
-  const handleSaveContact = () => console.log("💾 Guardado como contacto");
-  const handleReject = () => console.log("❌ Candidato rechazado");
+  // Hook para manejar las acciones del candidato
+  const {
+    handleReject,
+    handleSaveContact,
+    isRejecting,
+    isSaving,
+    isAccepting,
+    isAnyActionLoading,
+    modalState,
+    closeModal,
+  } = useCandidateActions(id);
+
+  // Manejador para abrir el diálogo de agendar entrevista
+  const handleAccept = () => {
+    setIsScheduleDialogOpen(true);
+  };
+
   const handleScheduleInterview = () => {
     console.log("📅 Cita agendada");
     setIsScheduleDialogOpen(false);
+    // Aquí podrías llamar a handleAcceptAction() si el endpoint ya está implementado
   };
 
   const candidateData = basic.data;
-  const candidatoNombre = candidateData?.candidato?.nombre_completo;
+  const candidatoNombre =
+    candidateData?.candidato?.nombre_completo || "el candidato";
   const candidatoCargo = candidateData?.datos_postulacion?.puesto_aspirado;
 
   return (
@@ -59,6 +78,7 @@ export default function CandidatesDetailPage() {
         variant="ghost"
         onClick={() => navigate(-1)}
         className="mb-6 text-gray-700 hover:bg-gray-100 rounded-xl"
+        disabled={isAnyActionLoading}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
         Volver
@@ -67,6 +87,7 @@ export default function CandidatesDetailPage() {
       <div className="space-y-6">
         {/* Banner de errores globales */}
         <ErrorBanner errorCount={errorCount} onRetryAll={retryAllFailed} />
+
         <MainInfoCard
           datosPostulacion={candidateData?.datos_postulacion}
           candidato={candidateData?.candidato}
@@ -93,8 +114,23 @@ export default function CandidatesDetailPage() {
           handleReject={handleReject}
           handleSaveContact={handleSaveContact}
           handleAccept={handleAccept}
+          isRejecting={isRejecting}
+          isSaving={isSaving}
+          isAccepting={isAccepting}
+          isAnyActionLoading={isAnyActionLoading}
+          candidateName={candidatoNombre}
         />
       </div>
+
+      {/* Modal de resultados de acciones */}
+      <ActionResultModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        status={modalState.status}
+        action={modalState.action}
+        candidateName={modalState.candidateName}
+        errorMessage={modalState.errorMessage}
+      />
 
       <ScheduleInterviewDialog
         isScheduleDialogOpen={isScheduleDialogOpen}
