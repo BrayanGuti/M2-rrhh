@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useFormDataStore } from "../../../stores/useFormDataStore";
 import { useChatStore } from "../../../stores/useChatStore";
-import { VACANCY_COVERTATION_PHASES } from "../../../const/Phases";
+import { VACANCY_COVERTATION_PHASES } from "../../../const";
 import {
   ChevronDown,
   ChevronUp,

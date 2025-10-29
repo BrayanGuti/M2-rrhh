@@ -6,7 +6,7 @@ import {
   ContinueForm,
   SubmitApplicationButton,
 } from "./ActionButtonComponents";
-import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
+import { VACANCY_COVERTATION_PHASES } from "../const";
 
 export function ActionButtonArea() {
   const { currentStep } = useChatStore();

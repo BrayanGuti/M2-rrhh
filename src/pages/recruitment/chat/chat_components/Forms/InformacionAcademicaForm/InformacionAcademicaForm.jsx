@@ -1,7 +1,7 @@
 // chat_components/Forms/InformacionAcademicaForm.jsx
 import { useState, useEffect } from "react";
 import { useFormDataStore } from "../../../stores/useFormDataStore";
-import { VACANCY_COVERTATION_PHASES } from "../../../const/Phases";
+import { VACANCY_COVERTATION_PHASES } from "../../../const";
 
 const FORMACION_OPTIONS = [
   "Primaria",

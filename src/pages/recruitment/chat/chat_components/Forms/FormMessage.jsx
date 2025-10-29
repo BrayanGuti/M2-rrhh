@@ -1,7 +1,7 @@
 import { DatosPostulacionForm } from "./DatosPostulacionForm/DatosPostulacionForm";
 import { CandidatoForm } from "./CandidatoForm/CandidatoForm";
 import { useChatStore } from "../../stores/useChatStore";
-import { VACANCY_COVERTATION_PHASES } from "../../const/Phases";
+import { VACANCY_COVERTATION_PHASES } from "../../const";
 import { DetallesPersonalesForm } from "./DetallesPersonalesForm/DetallesPersonalesForm";
 import { InformacionAcademicaForm } from "./InformacionAcademicaForm/InformacionAcademicaForm";
 import { InformacionFamiliarForm } from "./InformacionFamiliarForm/InformacionFamiliarForm";

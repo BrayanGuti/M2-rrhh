@@ -1,7 +1,7 @@
 // chat_components/Forms/TallasForm.jsx
 import { useState, useEffect } from "react";
 import { useFormDataStore } from "../../../stores/useFormDataStore";
-import { VACANCY_COVERTATION_PHASES } from "../../../const/Phases";
+import { VACANCY_COVERTATION_PHASES } from "../../../const";
 import { Shirt, User, Footprints } from "lucide-react";
 
 const TALLAS_CAMISA = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];

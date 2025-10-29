@@ -1,6 +1,6 @@
 // stores/useChatStore.js
 import { create } from "zustand";
-import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
+import { VACANCY_COVERTATION_PHASES } from "../const";
 import { uploadCV, countExtractedFields } from "../services/apiServices";
 import { useFormDataStore } from "./useFormDataStore";
 

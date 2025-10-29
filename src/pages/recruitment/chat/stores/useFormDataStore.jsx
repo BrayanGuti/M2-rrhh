@@ -1,6 +1,5 @@
 // stores/useFormDataStore.js
 import { create } from "zustand";
-import { initialFormData } from "./const";
 import { sendApplication } from "../services/apiServices";
 import {
   validateDatosPostulacion,
@@ -14,7 +13,7 @@ import {
   validateInformacionLaboral,
   validateDatosEconomicos,
 } from "../validations";
-import { VACANCY_COVERTATION_PHASES } from "../const/Phases";
+import { VACANCY_COVERTATION_PHASES, initialFormData } from "../const";
 
 // ============================================
 // VALIDADORES
