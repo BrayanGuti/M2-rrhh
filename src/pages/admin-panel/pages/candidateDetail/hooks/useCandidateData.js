@@ -248,7 +248,6 @@ const fetchWithDebug = async (endpoint, delay = 800, isBasicInfo = false) => {
   }
 
   // Real API call
-  console.log(`${API_BASE_URL}${endpoint}`);
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: "GET",
     headers: {

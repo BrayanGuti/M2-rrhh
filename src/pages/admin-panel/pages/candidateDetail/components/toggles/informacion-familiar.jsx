@@ -1,24 +1,43 @@
+import {
+  Heart, // Corazón para Cónyuge
+  Users, // Personas para Hijos/Hermanos
+  Home, // Casa o Familia para Padres (podrías usar "User" o "Users" si prefieres)
+  Info, // Icono de información general
+  User,
+} from "lucide-react"; // Se asume que usas lucide-react (o similar como Feather/Heroicons)
+
+// Componente auxiliar para mostrar un campo de información
+const DetailItem = ({ label, value }) => (
+  <div>
+    <p className="text-xs text-gray-500 mb-0.5 uppercase tracking-wider">
+      {label}
+    </p>
+    <p className="font-medium text-gray-800 text-sm">{value || "—"}</p>
+  </div>
+);
+
+// Componente principal mejorado
 export function InformacionFamiliar({ informacion }) {
+  // 1. Manejo inicial de la ausencia de información
   if (!informacion) {
-    return <p className="text-gray-500 text-sm">Sin información registrada</p>;
+    return (
+      <div className="flex items-center text-gray-500 bg-gray-50 p-4 rounded-xl border border-gray-200">
+        <Info className="w-5 h-5 mr-3 text-gray-400" />
+        <p className="text-sm">Sin información familiar registrada.</p>
+      </div>
+    );
   }
 
-  // 🔍 Validar cada sección correctamente
+  // 2. Validación de datos con validaciones más concisas
+  const isValidEntry = (entry) =>
+    entry && (entry.nombre || entry.edad || entry.ocupacion);
+
   const conyugeValido =
-    informacion.conyuge &&
-    (informacion.conyuge.nombre ||
-      informacion.conyuge.edad ||
-      informacion.conyuge.ocupacion);
+    informacion.conyuge && isValidEntry(informacion.conyuge);
 
-  const hijosValidos =
-    informacion.hijos?.filter((h) => h.nombre || h.edad || h.ocupacion) || [];
-
-  const padresValidos =
-    informacion.padres?.filter((p) => p.nombre || p.edad || p.ocupacion) || [];
-
-  const hermanosValidos =
-    informacion.hermanos?.filter((h) => h.nombre || h.edad || h.ocupacion) ||
-    [];
+  const hijosValidos = informacion.hijos?.filter(isValidEntry) || [];
+  const padresValidos = informacion.padres?.filter(isValidEntry) || [];
+  const hermanosValidos = informacion.hermanos?.filter(isValidEntry) || [];
 
   const hasData =
     conyugeValido ||
@@ -26,150 +45,119 @@ export function InformacionFamiliar({ informacion }) {
     padresValidos.length > 0 ||
     hermanosValidos.length > 0;
 
+  // 3. Manejo si la información existe, pero todos los campos están vacíos
   if (!hasData) {
-    return <p className="text-gray-500 text-sm">Sin información registrada</p>;
+    return (
+      <div className="flex items-center text-gray-500 bg-gray-50 p-4 rounded-xl border border-gray-200">
+        <Info className="w-5 h-5 mr-3 text-gray-400" />
+        <p className="text-sm">Sin información detallada registrada.</p>
+      </div>
+    );
   }
 
+  // Componente de tarjeta para un miembro de la familia (Hijos, Padres, Hermanos)
+  const FamilyMemberCard = ({ member, index }) => (
+    <div
+      key={index}
+      className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm transition hover:shadow-md"
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <DetailItem label="Nombre" value={member.nombre} />
+        <DetailItem
+          label="Edad"
+          value={member.edad ? `${member.edad} años` : null}
+        />
+        <DetailItem label="Ocupación" value={member.ocupacion} />
+      </div>
+    </div>
+  );
+
+  // 4. Renderizado principal
   return (
-    <div className="space-y-6">
-      {/* Cónyuge */}
+    <div className="space-y-8">
+      {/* Cónyuge - Sección destacada con color principal */}
       {conyugeValido && (
-        <div>
-          <h4 className="font-semibold text-gray-800 mb-3 text-sm">Cónyuge</h4>
-          <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Nombre</p>
-                <p className="font-medium text-gray-800">
-                  {informacion.conyuge.nombre || "—"}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Edad</p>
-                <p className="font-medium text-gray-800">
-                  {informacion.conyuge.edad
+        <SectionContainer title="Cónyuge" icon={Heart} iconColor="text-red-500">
+          <div className="bg-red-50 rounded-xl p-5 border border-red-200 shadow-inner">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <DetailItem label="Nombre" value={informacion.conyuge.nombre} />
+              <DetailItem
+                label="Edad"
+                value={
+                  informacion.conyuge.edad
                     ? `${informacion.conyuge.edad} años`
-                    : "—"}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 mb-1">Ocupación</p>
-                <p className="font-medium text-gray-800">
-                  {informacion.conyuge.ocupacion || "—"}
-                </p>
-              </div>
+                    : null
+                }
+              />
+              <DetailItem
+                label="Ocupación"
+                value={informacion.conyuge.ocupacion}
+              />
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Hijos */}
-      {hijosValidos.length > 0 && (
-        <div>
-          <h4 className="font-semibold text-gray-800 mb-3 text-sm">Hijos</h4>
-          <div className="space-y-3">
-            {hijosValidos.map((hijo, index) => (
-              <div
-                key={index}
-                className="bg-gray-50 rounded-xl p-4 border border-gray-200"
-              >
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Nombre</p>
-                    <p className="font-medium text-gray-800">
-                      {hijo.nombre || "—"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Edad</p>
-                    <p className="font-medium text-gray-800">
-                      {hijo.edad ? `${hijo.edad} años` : "—"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Ocupación</p>
-                    <p className="font-medium text-gray-800">
-                      {hijo.ocupacion || "—"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        </SectionContainer>
       )}
 
       {/* Padres */}
       {padresValidos.length > 0 && (
-        <div>
-          <h4 className="font-semibold text-gray-800 mb-3 text-sm">Padres</h4>
-          <div className="space-y-3">
+        <SectionContainer
+          title={`Padres (${padresValidos.length})`}
+          icon={Home}
+          iconColor="text-blue-500"
+        >
+          <div className="space-y-4">
             {padresValidos.map((padre, index) => (
-              <div
-                key={index}
-                className="bg-gray-50 rounded-xl p-4 border border-gray-200"
-              >
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Nombre</p>
-                    <p className="font-medium text-gray-800">
-                      {padre.nombre || "—"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Edad</p>
-                    <p className="font-medium text-gray-800">
-                      {padre.edad ? `${padre.edad} años` : "—"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Ocupación</p>
-                    <p className="font-medium text-gray-800">
-                      {padre.ocupacion || "—"}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <FamilyMemberCard key={index} member={padre} />
             ))}
           </div>
-        </div>
+        </SectionContainer>
+      )}
+
+      {/* Hijos */}
+      {hijosValidos.length > 0 && (
+        <SectionContainer
+          title={`Hijos (${hijosValidos.length})`}
+          icon={Users}
+          iconColor="text-teal-600"
+        >
+          <div className="space-y-4">
+            {hijosValidos.map((hijo, index) => (
+              <FamilyMemberCard key={index} member={hijo} />
+            ))}
+          </div>
+        </SectionContainer>
       )}
 
       {/* Hermanos */}
       {hermanosValidos.length > 0 && (
-        <div>
-          <h4 className="font-semibold text-gray-800 mb-3 text-sm">Hermanos</h4>
-          <div className="space-y-3">
+        <SectionContainer
+          title={`Hermanos (${hermanosValidos.length})`}
+          icon={User}
+          iconColor="text-purple-500"
+        >
+          <div className="space-y-4">
             {hermanosValidos.map((hermano, index) => (
-              <div
-                key={index}
-                className="bg-gray-50 rounded-xl p-4 border border-gray-200"
-              >
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Nombre</p>
-                    <p className="font-medium text-gray-800">
-                      {hermano.nombre || "—"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Edad</p>
-                    <p className="font-medium text-gray-800">
-                      {hermano.edad ? `${hermano.edad} años` : "—"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 mb-1">Ocupación</p>
-                    <p className="font-medium text-gray-800">
-                      {hermano.ocupacion || "—"}
-                    </p>
-                  </div>
-                </div>
-              </div>
+              <FamilyMemberCard key={index} member={hermano} />
             ))}
           </div>
-        </div>
+        </SectionContainer>
       )}
     </div>
   );
 }
+
+// Componente auxiliar para la estructura de la sección
+const SectionContainer = ({ title, icon: Icon, iconColor, children }) => (
+  <div>
+    <div className="flex items-center mb-4">
+      <Icon className={`w-5 h-5 mr-3 ${iconColor}`} />
+      <h3 className="font-bold text-gray-900 text-lg tracking-tight">
+        {title}
+      </h3>
+    </div>
+    {children}
+  </div>
+);
+
+// NOTA: Recuerda que debes importar los íconos (ej: lucide-react, react-icons, etc.)
+// y Tailwind CSS debe estar configurado en tu proyecto.

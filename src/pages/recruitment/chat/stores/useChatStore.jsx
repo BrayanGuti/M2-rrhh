@@ -4,10 +4,6 @@ import { VACANCY_COVERTATION_PHASES } from "../const";
 import { uploadCV, countExtractedFields } from "../services/apiServices";
 import { useFormDataStore } from "./useFormDataStore";
 
-// ============================================
-// MENSAJES Y CONFIGURACIÓN INICIAL
-// ============================================
-
 const initialMessages = [
   {
     id: "welcome-1",
@@ -24,10 +20,6 @@ const initialMessages = [
     timestamp: new Date(),
   },
 ];
-
-// ============================================
-// FLUJOS DE CONVERSACIÓN
-// ============================================
 
 const VACANCY_FLOW_PHASES = [
   { id: VACANCY_COVERTATION_PHASES.upload_cv },

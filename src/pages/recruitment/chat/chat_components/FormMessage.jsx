@@ -1,6 +1,5 @@
 import { useChatStore as useChat } from "../stores/useChatStore";
 import { VACANCY_COVERTATION_PHASES as PHASES } from "../const";
-
 import {
   DatosPostulacionForm as PostulacionForm,
   CandidatoForm as Candidato,
@@ -31,8 +30,6 @@ const FORM_COMPONENTS = {
 
 export function FormMessage() {
   const { currentStep } = useChat();
-
-  console.log("Current Step:", currentStep);
 
   const FormComponent = FORM_COMPONENTS[currentStep];
   return FormComponent ? <FormComponent /> : null;
