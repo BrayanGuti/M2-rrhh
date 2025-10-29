@@ -1,1 +1,1 @@
-#1 Endpoints de botones Respuestas de Error: ¿Qué estructura tienen las respuestas cuando hay error? ¿Algo como { exito: false, mensaje: "..." } o viene un status code diferente?
+Corregir numero en el form para que permita mas de 10 numeros

@@ -290,8 +290,7 @@ const fetchPDFWithDebug = async (endpoint, delay = 1000) => {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: "GET",
     headers: {
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTAiLCJyb2xfaWQiOiIxIiwiaWF0IjoxNzYxNjIzNTU2LCJleHAiOjE3NjE2NTIzNTZ9.3ZeAjOC8D6SkUjGO6BVbQBRLgJGZhLgK2J858B3gYmI",
+      Authorization: `Bearer ${token}`,
     },
   });
 

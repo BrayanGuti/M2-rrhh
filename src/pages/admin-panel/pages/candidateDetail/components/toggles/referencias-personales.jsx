@@ -22,9 +22,7 @@ export function ReferenciasPersonales({ referencias }) {
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">Teléfono</p>
-              <p className="font-medium text-gray-800">
-                {referencia.telefono_celular}
-              </p>
+              <p className="font-medium text-gray-800">{referencia.telefono}</p>
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">Ocupación</p>
