@@ -1,7 +1,7 @@
 // chat_components/Forms/CandidatoForm.jsx
 import { useState, useEffect } from "react";
-import { useFormDataStore } from "../../../stores/useFormDataStore";
-import { VACANCY_COVERTATION_PHASES } from "../../../const";
+import { useFormDataStore } from "../../stores/useFormDataStore";
+import { VACANCY_COVERTATION_PHASES } from "../../const";
 
 // Función para calcular edad desde fecha de nacimiento
 const calculateAge = (birthDate) => {
@@ -224,9 +224,7 @@ function TelefonoMovilInput({ handleChange, localData, errors }) {
         value={localData.telefono_movil}
         onChange={(e) => {
           const value = e.target.value.replace(/\D/g, ""); // Solo números
-          if (value.length <= 10) {
-            handleChange("telefono_movil", value);
-          }
+          handleChange("telefono_movil", value);
         }}
         placeholder="3001234567"
         maxLength="10"

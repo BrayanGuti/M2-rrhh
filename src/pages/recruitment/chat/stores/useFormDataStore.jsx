@@ -1,18 +1,7 @@
 // stores/useFormDataStore.js
 import { create } from "zustand";
 import { sendApplication } from "../services/apiServices";
-import {
-  validateDatosPostulacion,
-  validateCandidato,
-  validateDetallesPersonales,
-  validateInformacionAcademica,
-  validateReferenciasPersonales,
-  validateDatosGenerales,
-  validateTallas,
-  validateInformacionFamiliar,
-  validateInformacionLaboral,
-  validateDatosEconomicos,
-} from "../validations";
+import * as validations from "../validations";
 import { VACANCY_COVERTATION_PHASES, initialFormData } from "../const";
 
 // ============================================
@@ -20,21 +9,24 @@ import { VACANCY_COVERTATION_PHASES, initialFormData } from "../const";
 // ============================================
 
 const FORM_VALIDATORS = {
-  [VACANCY_COVERTATION_PHASES.form_datos_postulacion]: validateDatosPostulacion,
-  [VACANCY_COVERTATION_PHASES.form_candidato]: validateCandidato,
+  [VACANCY_COVERTATION_PHASES.form_datos_postulacion]:
+    validations.validateDatosPostulacion,
+  [VACANCY_COVERTATION_PHASES.form_candidato]: validations.validateCandidato,
   [VACANCY_COVERTATION_PHASES.form_detalles_personales]:
-    validateDetallesPersonales,
+    validations.validateDetallesPersonales,
   [VACANCY_COVERTATION_PHASES.form_informacion_familiar]:
-    validateInformacionFamiliar,
+    validations.validateInformacionFamiliar,
   [VACANCY_COVERTATION_PHASES.form_informacion_academica]:
-    validateInformacionAcademica,
+    validations.validateInformacionAcademica,
   [VACANCY_COVERTATION_PHASES.form_informacion_laboral]:
-    validateInformacionLaboral,
+    validations.validateInformacionLaboral,
   [VACANCY_COVERTATION_PHASES.form_referencias_personales]:
-    validateReferenciasPersonales,
-  [VACANCY_COVERTATION_PHASES.form_datos_generales]: validateDatosGenerales,
-  [VACANCY_COVERTATION_PHASES.form_datos_economicos]: validateDatosEconomicos,
-  [VACANCY_COVERTATION_PHASES.form_tallas]: validateTallas,
+    validations.validateReferenciasPersonales,
+  [VACANCY_COVERTATION_PHASES.form_datos_generales]:
+    validations.validateDatosGenerales,
+  [VACANCY_COVERTATION_PHASES.form_datos_economicos]:
+    validations.validateDatosEconomicos,
+  [VACANCY_COVERTATION_PHASES.form_tallas]: validations.validateTallas,
 };
 
 // ============================================

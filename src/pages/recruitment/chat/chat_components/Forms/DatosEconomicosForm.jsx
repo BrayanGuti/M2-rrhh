@@ -1,7 +1,7 @@
 // chat_components/Forms/DatosEconomicosForm.jsx
 import { useState, useEffect } from "react";
-import { useFormDataStore } from "../../../stores/useFormDataStore";
-import { VACANCY_COVERTATION_PHASES } from "../../../const";
+import { useFormDataStore } from "../../stores/useFormDataStore";
+import { VACANCY_COVERTATION_PHASES } from "../../const";
 import { DollarSign, TrendingUp, Car, CreditCard, Wallet } from "lucide-react";
 
 const DATOS_INICIALES = {

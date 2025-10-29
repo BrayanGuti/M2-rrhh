@@ -1,8 +1,8 @@
 // chat_components/Forms/InformacionFamiliarForm.jsx
 import { useState, useEffect } from "react";
-import { useFormDataStore } from "../../../stores/useFormDataStore";
-import { validateInformacionFamiliar } from "../../../validations";
-import { VACANCY_COVERTATION_PHASES } from "../../../const";
+import { useFormDataStore } from "../../stores/useFormDataStore";
+import { validateInformacionFamiliar } from "../../validations";
+import { VACANCY_COVERTATION_PHASES } from "../../const";
 
 export function InformacionFamiliarForm() {
   const { formData, setSection } = useFormDataStore();

@@ -1,0 +1,11 @@
+export { CandidatoForm } from "./CandidatoForm";
+export { DatosEconomicosForm } from "./DatosEconomicosForm";
+export { DatosGeneralesForm } from "./DatosGeneralesForm";
+export { DatosPostulacionForm } from "./DatosPostulacionForm";
+export { DetallesPersonalesForm } from "./DetallesPersonalesForm";
+export { FormSummary } from "./FormSummary";
+export { InformacionAcademicaForm } from "./InformacionAcademicaForm";
+export { InformacionFamiliarForm } from "./InformacionFamiliarForm";
+export { InformacionLaboralForm } from "./InformacionLaboralForm";
+export { ReferenciasPersonalesForm } from "./ReferenciasPersonalesForm";
+export { TallasForm } from "./TallasForm";

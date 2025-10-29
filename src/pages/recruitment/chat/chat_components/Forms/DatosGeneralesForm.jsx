@@ -1,7 +1,7 @@
 // chat_components/Forms/DatosGeneralesForm.jsx
 import { useState, useEffect } from "react";
-import { useFormDataStore } from "../../../stores/useFormDataStore";
-import { VACANCY_COVERTATION_PHASES } from "../../../const";
+import { useFormDataStore } from "../../stores/useFormDataStore";
+import { VACANCY_COVERTATION_PHASES } from "../../const";
 import { Info, Calendar, Briefcase } from "lucide-react";
 
 const FORMAS_ENTERARSE = [

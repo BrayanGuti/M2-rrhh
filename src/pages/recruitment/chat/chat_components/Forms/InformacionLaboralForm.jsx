@@ -1,6 +1,6 @@
 // chat_components/Forms/InformacionLaboralForm.jsx
 import { useState, useEffect } from "react";
-import { useFormDataStore } from "../../../stores/useFormDataStore";
+import { useFormDataStore } from "../../stores/useFormDataStore";
 
 const MAX_AMOUNT_EXPERIENCIAS = 3;
 

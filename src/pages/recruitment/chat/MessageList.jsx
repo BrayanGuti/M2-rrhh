@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback } from "@/ui/avatar";
 import { useEffect, useRef } from "react";
 import { useChatStore } from "./stores/useChatStore";
-import { FormMessage } from "./chat_components/Forms/FormMessage";
+import { FormMessage } from "./chat_components/FormMessage";
 import { VACANCY_COVERTATION_PHASES } from "./const";
 
 export function MessageList() {

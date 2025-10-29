@@ -1,7 +1,7 @@
 // chat_components/Forms/ReferenciasPersonalesForm.jsx
 import { useState, useEffect } from "react";
-import { useFormDataStore } from "../../../stores/useFormDataStore";
-import { VACANCY_COVERTATION_PHASES } from "../../../const";
+import { useFormDataStore } from "../../stores/useFormDataStore";
+import { VACANCY_COVERTATION_PHASES } from "../../const";
 import { Trash2, Plus, Users } from "lucide-react";
 
 const REFERENCIA_INICIAL = {
