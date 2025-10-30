@@ -270,6 +270,8 @@ async function sendApplicationReal(applicationData) {
     console.log("✅ Aplicación enviada exitosamente:", data);
     return data;
   } catch (error) {
+    console.error("Detalles del Error:", error.message); // <--- AÑADE ESTA LÍNEA
+    console.error("Error completo (si es un objeto):", JSON.stringify(error));
     console.error("❌ Error al enviar aplicación:", error);
     throw error;
   }
