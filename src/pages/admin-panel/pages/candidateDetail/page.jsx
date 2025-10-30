@@ -1,4 +1,3 @@
-// pages/CandidatesDetailPage.jsx
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -70,6 +69,14 @@ export default function CandidatesDetailPage() {
     candidateData?.candidato?.nombre_completo || "el candidato";
   const candidatoCargo = candidateData?.datos_postulacion?.puesto_aspirado;
 
+  // ⭐ NUEVO: Extraer el estado del candidato
+  const estadoCandidato = candidateData?.estado || "pendiente";
+
+  // Debug del estado (solo en desarrollo)
+  if (DEBUG_MODE && candidateData?.estado) {
+    console.log(`[ESTADO] 📊 Estado del candidato: ${estadoCandidato}`);
+  }
+
   return (
     <CandidateLayoutState loading={basic.isLoading} error={basic.error}>
       {DEBUG_MODE && <DebugBanner />}
@@ -110,6 +117,7 @@ export default function CandidatesDetailPage() {
           candidatoCargo={candidatoCargo}
         />
 
+        {/* ⭐ ACTUALIZADO: Pasar el estado como prop */}
         <ActionButtons
           handleReject={handleReject}
           handleSaveContact={handleSaveContact}
@@ -119,6 +127,7 @@ export default function CandidatesDetailPage() {
           isAccepting={isAccepting}
           isAnyActionLoading={isAnyActionLoading}
           candidateName={candidatoNombre}
+          estado={estadoCandidato}
         />
       </div>
 

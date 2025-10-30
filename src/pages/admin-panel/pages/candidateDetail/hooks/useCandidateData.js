@@ -20,6 +20,7 @@ const mockResponses = {
   basic: {
     exito: true,
     candidato_id: "ñelwfjñefpoeñaslmñasdv",
+    estado: "pendiente",
     mensaje: "Datos básicos del candidato obtenidos con éxito.",
     datos_postulacion: {
       fecha_solicitud: "2025-10-20",

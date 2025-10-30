@@ -252,7 +252,8 @@ async function sendApplicationDebug(applicationData) {
  */
 async function sendApplicationReal(applicationData) {
   console.log("📤 Enviando aplicación al servidor...");
-
+  console.log(`${API_BASE_URL}/api/submit/application`);
+  console.log("Datos de la aplicación:", applicationData);
   try {
     const response = await fetch(`${API_BASE_URL}/api/submit/application`, {
       method: "POST",

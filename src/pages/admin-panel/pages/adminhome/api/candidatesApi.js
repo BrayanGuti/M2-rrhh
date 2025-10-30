@@ -272,12 +272,12 @@ export const candidatesApi = {
     }
 
     const url = `${API_BASE_URL}/api/candidatos/?${params.toString()}`;
-    console.log(`🔧 DEBUG MODE: Usando URL: ${url}`);
 
     if (DEBUG_MODE) {
       console.log("🔧 DEBUG MODE: Usando datos simulados");
       return mockApiCall({ page, limit, order, cargo, status });
     }
+    console.log(token);
 
     const response = await fetch(url, {
       method: "GET",
