@@ -146,7 +146,6 @@ export function InformacionFamiliar({ informacion }) {
   );
 }
 
-// Componente auxiliar para la estructura de la sección
 const SectionContainer = ({ title, icon: Icon, iconColor, children }) => (
   <div>
     <div className="flex items-center mb-4">
@@ -158,6 +157,3 @@ const SectionContainer = ({ title, icon: Icon, iconColor, children }) => (
     {children}
   </div>
 );
-
-// NOTA: Recuerda que debes importar los íconos (ej: lucide-react, react-icons, etc.)
-// y Tailwind CSS debe estar configurado en tu proyecto.

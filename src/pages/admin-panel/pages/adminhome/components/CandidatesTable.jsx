@@ -42,7 +42,7 @@ export function CandidatesTable({
     return (
       <Card className="bg-white border-gray-200 rounded-2xl overflow-hidden shadow-md">
         <div className="flex items-center justify-center p-12">
-          <p className="text-gray-500">{config.emptyStateMessage}</p>
+          <p className="text-gray-500">No se encontraron candidatos</p>
         </div>
       </Card>
     );
