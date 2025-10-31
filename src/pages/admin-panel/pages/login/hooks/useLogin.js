@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { DEBUG_MODE } from "@/const/config";
+import { LOGIN } from "@/const/endpoints";
 
 /**
  * Hook personalizado para manejar inicio de sesión.
  * En modo DEBUG simula la respuesta del backend.
  */
-
-const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL;
 
 export function useLogin() {
   const [loading, setLoading] = useState(false);
@@ -50,7 +49,7 @@ export function useLogin() {
       }
 
       // 🚀 Si no está en modo debug, hace la petición real al backend
-      const response = await fetch(`${API_BASE_URL}/api/usuarios/login`, {
+      const response = await fetch(LOGIN, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,13 +1,6 @@
 // services/apiServices.js
 import { DEBUG_MODE } from "@/const/config";
-
-// ============================================
-// CONFIGURACIÓN
-//  co===============
-// =============================
-
-const API_BASE_URL =
-  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
+import { SEND_CV, SUBMIT_APPLICATION } from "@/const/endpoints";
 
 // ============================================
 // DATOS MOCK PARA DEBUG
@@ -173,7 +166,7 @@ async function uploadCVReal(file) {
   formData.append("cv_file", file);
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/submit/cv-extract`, {
+    const response = await fetch(SEND_CV, {
       method: "POST",
       body: formData,
     });
@@ -202,8 +195,6 @@ async function uploadCVReal(file) {
  * @returns {Promise<Object>}
  */
 export async function uploadCV(file) {
-  console.log(`${API_BASE_URL}/api/submit/cv-extract`);
-
   return DEBUG_MODE ? uploadCVDebug(file) : uploadCVReal(file);
 }
 
@@ -251,11 +242,8 @@ async function sendApplicationDebug(applicationData) {
  * @returns {Promise<Object>}
  */
 async function sendApplicationReal(applicationData) {
-  console.log("📤 Enviando aplicación al servidor...");
-  console.log(`${API_BASE_URL}/api/submit/application`);
-  console.log("Datos de la aplicación:", applicationData);
   try {
-    const response = await fetch(`${API_BASE_URL}/api/submit/application`, {
+    const response = await fetch(SUBMIT_APPLICATION, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

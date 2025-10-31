@@ -1,4 +1,5 @@
 import { DEBUG_MODE } from "@/const/config";
+import { GET_CANDIDATES } from "@/const/endpoints";
 import { token } from "../../../utils/jwt";
 
 const MOCK_CANDIDATES = [
@@ -203,8 +204,6 @@ const generateMockCandidates = (count) => {
 };
 
 const ALL_MOCK_DATA = generateMockCandidates(124);
-const API_BASE_URL =
-  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
 
 // 🔧 DEBUG MODE: Cambiar a false para usar API real
 
@@ -271,15 +270,12 @@ export const candidatesApi = {
       params.append("cargo", cargo);
     }
 
-    const url = `${API_BASE_URL}/api/candidatos/?${params.toString()}`;
-
     if (DEBUG_MODE) {
       console.log("🔧 DEBUG MODE: Usando datos simulados");
       return mockApiCall({ page, limit, order, cargo, status });
     }
-    console.log(token);
 
-    const response = await fetch(url, {
+    const response = await fetch(GET_CANDIDATES(params), {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

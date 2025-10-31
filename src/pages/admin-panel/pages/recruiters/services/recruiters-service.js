@@ -1,9 +1,11 @@
 import { token } from "../../../utils/jwt";
 import { DEBUG_MODE } from "@/const/config";
-import { MOCK_RECRUITERS, ERROR_MESSAGES, ENDPOINTS } from "../const/config.js";
-
-const API_BASE_URL =
-  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
+import {
+  GET_RECRUITERS,
+  CREATE_RECRUITER,
+  DELETE_RECRUITER,
+} from "@/const/endpoints";
+import { MOCK_RECRUITERS, ERROR_MESSAGES } from "../const/config.js";
 
 /**
  * Delay helper para simular latencia en modo debug
@@ -29,13 +31,10 @@ export const fetchRecruiters = async () => {
   }
 
   try {
-    const response = await fetch(
-      `${API_BASE_URL}${ENDPOINTS.GET_USERS}?rol=Reclutador`,
-      {
-        method: "GET",
-        headers: getHeaders(),
-      }
-    );
+    const response = await fetch(GET_RECRUITERS, {
+      method: "GET",
+      headers: getHeaders(),
+    });
 
     if (!response.ok) {
       throw new Error(ERROR_MESSAGES.FETCH);
@@ -71,14 +70,11 @@ export const createRecruiter = async (recruiterData) => {
   }
 
   try {
-    const response = await fetch(
-      `${API_BASE_URL}${ENDPOINTS.REGISTER_RECRUITER}`,
-      {
-        method: "POST",
-        headers: getHeaders(),
-        body: JSON.stringify(recruiterData),
-      }
-    );
+    const response = await fetch(CREATE_RECRUITER, {
+      method: "POST",
+      headers: getHeaders(),
+      body: JSON.stringify(recruiterData),
+    });
 
     if (!response.ok) {
       throw new Error(ERROR_MESSAGES.CREATE);
@@ -114,13 +110,10 @@ export const deleteRecruiter = async (recruiterId) => {
   }
 
   try {
-    const response = await fetch(
-      `${API_BASE_URL}${ENDPOINTS.DELETE_USER}/${recruiterId}`,
-      {
-        method: "POST",
-        headers: getHeaders(),
-      }
-    );
+    const response = await fetch(DELETE_RECRUITER(recruiterId), {
+      method: "POST",
+      headers: getHeaders(),
+    });
 
     if (!response.ok) {
       throw new Error(ERROR_MESSAGES.DELETE);

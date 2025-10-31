@@ -1,9 +1,4 @@
 // Endpoints
-export const ENDPOINTS = {
-  REGISTER_RECRUITER: "/api/usuarios/reclutador/registro",
-  DELETE_USER: "/api/usuarios/eliminar",
-  GET_USERS: "/api/usuarios",
-};
 
 // Mensajes de error genéricos
 export const ERROR_MESSAGES = {

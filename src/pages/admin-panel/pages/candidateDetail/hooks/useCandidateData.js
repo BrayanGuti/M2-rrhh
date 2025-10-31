@@ -2,11 +2,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { DEBUG_MODE } from "@/const/config.js";
+import { GET_CANDIDATE_DETAILS, GET_PDF_RESUME } from "@/const/endpoints.js";
 import { token } from "../../../utils/jwt";
-
-// ==================== CONFIGURATION ====================
-const API_BASE_URL =
-  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
 
 // Cache duration: 10 minutes
 const CACHE_DURATION = 10 * 60 * 1000;
@@ -249,7 +246,7 @@ const fetchWithDebug = async (endpoint, delay = 800, isBasicInfo = false) => {
   }
 
   // Real API call
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await fetch(GET_CANDIDATE_DETAILS(endpoint), {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -286,8 +283,7 @@ const fetchPDFWithDebug = async (endpoint, delay = 1000) => {
   }
 
   // Real API call
-  console.log(`${API_BASE_URL}${endpoint}`);
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+  const response = await fetch(GET_PDF_RESUME(endpoint), {
     method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,

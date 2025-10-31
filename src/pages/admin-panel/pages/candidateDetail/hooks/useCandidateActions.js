@@ -2,10 +2,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DEBUG_MODE } from "@/const/config";
+import { REJECT_CANDIDATE, SAVE_AS_CONTACT } from "@/const/endpoints";
 import { token } from "../../../utils/jwt";
-
-const API_BASE_URL =
-  import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";
 
 /**
  * Simula respuestas del servidor en modo DEBUG
@@ -98,16 +96,13 @@ export function useCandidateActions(candidatoId) {
         console.log("🔧 DEBUG MODE: Simulando rechazo de candidato");
         response = await simulateApiResponse("rechazar");
       } else {
-        response = await fetch(
-          `${API_BASE_URL}/api/candidatos/pendientes/${candidatoId}/rechazar`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        response = await fetch(REJECT_CANDIDATE(candidatoId), {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
 
       if (!response.ok) {
@@ -168,19 +163,16 @@ export function useCandidateActions(candidatoId) {
         console.log("🔧 DEBUG MODE: Simulando guardar como contacto");
         response = await simulateApiResponse("contacto");
       } else {
-        response = await fetch(
-          `${API_BASE_URL}/api/candidatos/pendientes/${candidatoId}/contacto`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              estado: "pendiente",
-            }),
-          }
-        );
+        response = await fetch(SAVE_AS_CONTACT(candidatoId), {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            estado: "pendiente",
+          }),
+        });
       }
 
       if (!response.ok) {
