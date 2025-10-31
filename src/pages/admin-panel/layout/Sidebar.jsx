@@ -73,7 +73,7 @@ export function Sidebar({ isOpen }) {
         {/* Botón de cierre de sesión */}
         <button
           onClick={logout}
-          className="flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all mt-auto w-full text-left"
+          className="hover:cursor-pointer flex items-center gap-3 px-4 py-3 rounded-2xl text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all mt-auto w-full text-left"
         >
           <LogOut className="w-5 h-5 flex-shrink-0" />
           {isOpen && (

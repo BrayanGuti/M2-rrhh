@@ -33,6 +33,7 @@ export const AccordionTrigger = React.forwardRef(
     </AccordionPrimitive.Header>
   )
 );
+
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName;
 
 export const AccordionContent = React.forwardRef(

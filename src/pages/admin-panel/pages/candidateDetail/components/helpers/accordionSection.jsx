@@ -20,7 +20,7 @@ export function AccordionSection({
       value={value}
       className="bg-white border border-gray-200 rounded-2xl px-6 shadow-sm"
     >
-      <AccordionTrigger className="text-lg font-semibold text-gray-800 hover:no-underline py-5">
+      <AccordionTrigger className=" hover:cursor-pointer text-lg font-semibold text-gray-800 hover:no-underline py-5">
         {title}
       </AccordionTrigger>
       <AccordionContent className="pb-5">
