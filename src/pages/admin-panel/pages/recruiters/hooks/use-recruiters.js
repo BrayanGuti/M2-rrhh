@@ -116,13 +116,9 @@ export function useRecruiters() {
 
   // Eliminar reclutador
   const deleteRecruiter = async (recruiter) => {
-    try {
-      await deleteMutation.mutateAsync(recruiter.id);
-      closeDeleteModal();
-      return { success: true };
-    } catch (error) {
-      throw error;
-    }
+    await deleteMutation.mutateAsync(recruiter.id);
+    closeDeleteModal();
+    return { success: true };
   };
 
   return {
