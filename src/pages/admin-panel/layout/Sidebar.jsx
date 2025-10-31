@@ -1,7 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { Home, Users, Calendar, UserCog, LogOut } from "lucide-react";
-import { useLogout } from "./hooks/useLogout";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth, useLogout } from "../hooks/useAuth";
 
 const allNavItems = [
   { to: "/admin", icon: Home, label: "Inicio", roles: ["1", "2"] },

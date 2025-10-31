@@ -12,6 +12,10 @@ const AdminCandidates = lazy(() =>
   import("../pages/admin-panel/pages/candidateDetail/page")
 );
 
+const RecruitersPage = lazy(() =>
+  import("../pages/admin-panel/pages/recruiters/page")
+);
+
 /**
  * Rutas protegidas del administrador
  *
@@ -40,6 +44,14 @@ export const adminRoutes = [
     element: (
       <ProtectedRoute>
         <AdminCandidates />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/admin/reclutadores",
+    element: (
+      <ProtectedRoute>
+        <RecruitersPage />
       </ProtectedRoute>
     ),
   },
