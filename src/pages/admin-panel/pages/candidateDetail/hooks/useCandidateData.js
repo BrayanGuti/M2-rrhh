@@ -2,7 +2,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { DEBUG_MODE } from "@/const/config.js";
-import { token } from "../../../hooks/useJWT.js";
+import { token } from "../../../utils/jwt";
 
 // ==================== CONFIGURATION ====================
 const API_BASE_URL =

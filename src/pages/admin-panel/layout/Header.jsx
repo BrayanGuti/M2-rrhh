@@ -1,8 +1,23 @@
+// components/Header.jsx
 import { Menu, X } from "lucide-react";
 import { Button } from "@/ui/button";
 import { Avatar, AvatarFallback } from "@/ui/avatar";
+import { useAuth } from "../hooks/useAuth";
 
 export function Header({ title, isSidebarOpen, onToggleSidebar }) {
+  const { user, isLoading } = useAuth();
+
+  // Obtener iniciales del nombre
+  const getInitials = (name) => {
+    if (!name) return "U";
+    return name
+      .split(" ")
+      .map((word) => word[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200 shadow-sm">
       <div className="flex items-center justify-between px-6 py-4">
@@ -36,15 +51,19 @@ export function Header({ title, isSidebarOpen, onToggleSidebar }) {
 
         {/* Información del usuario */}
         <div className="flex items-center gap-3">
-          <div className="text-right hidden md:block">
-            <p className="text-sm font-medium text-gray-800">Admin Usuario</p>
-            <p className="text-xs text-gray-500">Recursos Humanos</p>
-          </div>
-          <Avatar className="w-10 h-10 border-2 border-[#44BBA4]">
-            <AvatarFallback className="bg-[#44BBA4] text-white font-semibold">
-              AU
-            </AvatarFallback>
-          </Avatar>
+          {!isLoading && user && (
+            <>
+              <div className="text-right hidden md:block">
+                <p className="text-sm font-medium text-gray-800">{user.name}</p>
+                <p className="text-xs text-gray-500">{user.roleName}</p>
+              </div>
+              <Avatar className="w-10 h-10 border-2 border-[#44BBA4]">
+                <AvatarFallback className="bg-[#44BBA4] text-white font-semibold">
+                  {getInitials(user.name)}
+                </AvatarFallback>
+              </Avatar>
+            </>
+          )}
         </div>
       </div>
     </header>

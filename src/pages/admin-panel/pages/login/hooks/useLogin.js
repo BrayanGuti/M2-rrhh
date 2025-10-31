@@ -26,7 +26,8 @@ export function useLogin() {
         if (nombre_usuario === "usuario" && contrasena === "12345") {
           const fakeData = {
             exito: true,
-            token_acceso: "token_falso_debug_12345",
+            token_acceso:
+              "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMTEiLCJuYW1lIjoiSGVybmFuIE1lbG8iLCJyb2xfaWQiOiIxIiwiaWF0IjoxNzYxNzk3NDQyLCJleHAiOjE3NjE4NDc4NDJ9.MJyPBljPyHRTCB_SbUxv-sJVFmtnU6x26LPpPWIul2k",
           };
 
           localStorage.setItem("access_token", fakeData.token_acceso);

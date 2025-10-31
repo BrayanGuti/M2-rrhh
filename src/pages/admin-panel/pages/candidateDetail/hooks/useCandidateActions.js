@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DEBUG_MODE } from "@/const/config";
-import { token } from "../../../hooks/useJWT";
+import { token } from "../../../utils/jwt";
 
 const API_BASE_URL =
   import.meta.env.VITE_BACKEND_API_URL || "http://localhost:8000";

@@ -1,17 +1,43 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { Home, Users, Calendar, UserCog, LogOut } from "lucide-react";
 import { useLogout } from "./hooks/useLogout";
+import { useAuth } from "../hooks/useAuth";
 
-const navItems = [
-  { to: "/admin", icon: Home, label: "Inicio" },
-  { to: "/admin/contactos", icon: Users, label: "Contactos" },
-  { to: "/admin/calendario", icon: Calendar, label: "Calendario" },
-  { to: "/admin/reclutadores", icon: UserCog, label: "Reclutadores" },
+const allNavItems = [
+  { to: "/admin", icon: Home, label: "Inicio", roles: ["1", "2"] },
+  {
+    to: "/admin/contactos",
+    icon: Users,
+    label: "Contactos",
+    roles: ["1", "2"],
+  },
+  {
+    to: "/admin/calendario",
+    icon: Calendar,
+    label: "Calendario",
+    roles: ["1", "2"],
+  },
+  {
+    to: "/admin/reclutadores",
+    icon: UserCog,
+    label: "Reclutadores",
+    roles: ["1"],
+  }, // Solo Super Admin (rol 2)
 ];
 
 export function Sidebar({ isOpen }) {
   const location = useLocation();
   const { logout } = useLogout();
+  const { user, isLoading } = useAuth();
+
+  // Filtrar items según el rol del usuario
+  const navItems = allNavItems.filter(
+    (item) => user && item.roles.includes(user.roleId)
+  );
+
+  if (isLoading) {
+    return null; // O un skeleton loader
+  }
 
   return (
     <aside

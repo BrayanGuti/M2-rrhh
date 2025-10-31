@@ -1,5 +1,5 @@
 import { DEBUG_MODE } from "@/const/config";
-import { token } from "../../../hooks/useJWT";
+import { token } from "../../../utils/jwt";
 
 const MOCK_CANDIDATES = [
   {
