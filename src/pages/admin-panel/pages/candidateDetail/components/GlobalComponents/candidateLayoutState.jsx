@@ -8,7 +8,7 @@ export function CandidateLayoutState({ loading, error, children }) {
   const navigate = useNavigate();
 
   return (
-    <AdminLayout>
+    <>
       {loading ? (
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
           <Loader2 className="w-12 h-12 animate-spin text-blue-500 mb-4" />
@@ -38,6 +38,6 @@ export function CandidateLayoutState({ loading, error, children }) {
       ) : (
         children
       )}
-    </AdminLayout>
+    </>
   );
 }

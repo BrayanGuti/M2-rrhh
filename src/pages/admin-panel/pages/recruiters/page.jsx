@@ -2,7 +2,6 @@ import { RecruitersList } from "./components/recruiters-list";
 import { RecruiterModal } from "./components/recruiter-modal";
 import { DeleteRecruiterModal } from "./components/deleteRecruiterModal";
 import { useRecruiters } from "./hooks/use-recruiters";
-import { AdminLayout } from "../../layout/Layout";
 import { DEBUG_MODE } from "@/const/config";
 
 export default function ReclutadoresPage() {
@@ -42,7 +41,7 @@ export default function ReclutadoresPage() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -83,6 +82,6 @@ export default function ReclutadoresPage() {
         recruiter={selectedRecruiter}
         onDelete={deleteRecruiter}
       />
-    </AdminLayout>
+    </>
   );
 }

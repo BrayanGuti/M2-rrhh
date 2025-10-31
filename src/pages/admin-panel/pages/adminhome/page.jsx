@@ -43,7 +43,7 @@ export function CandidatesListView({ status = "pendiente" }) {
   };
 
   return (
-    <AdminLayout>
+    <>
       <Filters
         cargoFilter={cargoFilter}
         ordenFilter={ordenFilter}
@@ -60,7 +60,7 @@ export function CandidatesListView({ status = "pendiente" }) {
         onPageChange={handlePageChange}
         config={config}
       />
-    </AdminLayout>
+    </>
   );
 }
 

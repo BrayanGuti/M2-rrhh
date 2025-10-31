@@ -1,16 +1,17 @@
-import { useState } from "react";
+// AdminLayout.jsx
 import { Header } from "./Header";
 import { Sidebar } from "./Sidebar";
+import { useSidebar } from "./contexts/SidebarContext";
 
 export function AdminLayout({ children, title = "Panel Administrativo" }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { isSidebarOpen, toggleSidebar } = useSidebar();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       <Header
         title={title}
         isSidebarOpen={isSidebarOpen}
-        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        onToggleSidebar={toggleSidebar}
       />
       <Sidebar isOpen={isSidebarOpen} />
 
