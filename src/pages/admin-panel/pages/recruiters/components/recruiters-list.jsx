@@ -2,18 +2,37 @@ import { Card } from "@/ui/card";
 import { Button } from "@/ui/button";
 import { Avatar, AvatarFallback } from "@/ui/avatar";
 import { Mail, Phone, Info, Trash2, Plus } from "lucide-react";
+import { DEBUG_MODE } from "@/const/config";
 
 export function RecruitersList({
   recruiters,
   onViewDetails,
   onDelete,
   onAddNew,
+  isLoading,
 }) {
+  if (DEBUG_MODE) {
+    console.log("🔧 [DEBUG MODE] RecruitersList render:", {
+      recruiters,
+      isLoading,
+    });
+  }
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, index) => (
+          <SkeletonCard key={index} />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {recruiters.map((recruiter) => (
         <RecruiterCard
-          key={recruiter.documento_identidad}
+          key={recruiter.id || recruiter.documento_identidad}
           recruiter={recruiter}
           onViewDetails={onViewDetails}
           onDelete={onDelete}
@@ -47,7 +66,7 @@ export function RecruiterCard({ recruiter, onViewDetails, onDelete }) {
       <div className="space-y-3 mb-4">
         <div className="flex items-center gap-2 text-gray-600">
           <Mail className="w-4 h-4 text-[#44BBA4]" />
-          <span className="text-sm">{recruiter.correo}</span>
+          <span className="text-sm truncate">{recruiter.correo}</span>
         </div>
         <div className="flex items-center gap-2 text-gray-600">
           <Phone className="w-4 h-4 text-[#44BBA4]" />
@@ -90,6 +109,37 @@ export function AddRecruiterCard({ onClick }) {
           Agregar Reclutador
         </h3>
         <p className="text-sm text-gray-600">Crear un nuevo reclutador</p>
+      </div>
+    </Card>
+  );
+}
+
+// Skeleton loader component
+function SkeletonCard() {
+  return (
+    <Card className="bg-white border-gray-200 rounded-2xl p-6 shadow-md animate-pulse">
+      <div className="flex items-center gap-4 mb-4">
+        <div className="w-16 h-16 bg-gray-200 rounded-full"></div>
+        <div className="flex-1">
+          <div className="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        </div>
+      </div>
+
+      <div className="space-y-3 mb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-gray-200 rounded"></div>
+          <div className="h-4 bg-gray-200 rounded flex-1"></div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 bg-gray-200 rounded"></div>
+          <div className="h-4 bg-gray-200 rounded flex-1"></div>
+        </div>
+      </div>
+
+      <div className="flex gap-2">
+        <div className="flex-1 h-10 bg-gray-200 rounded-xl"></div>
+        <div className="flex-1 h-10 bg-gray-200 rounded-xl"></div>
       </div>
     </Card>
   );

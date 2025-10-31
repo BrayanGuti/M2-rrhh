@@ -9,10 +9,20 @@ import { Button } from "@/ui/button";
 import { Input } from "@/ui/input";
 import { Label } from "@/ui/label";
 import { useState } from "react";
+import { validateRecruiterForm } from "../utils/createRecruiterValidator";
+import { DEBUG_MODE, ROLS } from "@/const/config";
+import { Loader2 } from "lucide-react";
 
-export function RecruiterModal({ isOpen, mode, recruiter, onClose, onCreate }) {
+export function RecruiterModal({
+  isOpen,
+  mode,
+  recruiter,
+  onClose,
+  onCreate,
+  isCreating,
+}) {
   const [formData, setFormData] = useState({
-    rol: "",
+    rol: ROLS.recruiter,
     nombre: "",
     correo: "",
     telefono: "",
@@ -22,23 +32,41 @@ export function RecruiterModal({ isOpen, mode, recruiter, onClose, onCreate }) {
     direccion: "",
   });
 
-  const handleCreate = () => {
+  const [errors, setErrors] = useState({});
+
+  const handleCreate = async () => {
+    // Validar formulario
+    const validation = validateRecruiterForm(formData);
+
+    if (!validation.isValid) {
+      setErrors(validation.errors);
+
+      if (DEBUG_MODE) {
+        console.log("🔧 [DEBUG MODE] Validation errors:", validation.errors);
+      }
+      return;
+    }
+
+    // Limpiar errores
+    setErrors({});
+
+    // Llamar a onCreate
     if (onCreate) {
-      const newRecruiter = {
-        ...formData,
-        created_at: new Date().toISOString(),
-      };
-      onCreate(newRecruiter);
-      setFormData({
-        rol: "",
-        nombre: "",
-        correo: "",
-        telefono: "",
-        nombre_usuario: "",
-        contrasena: "",
-        documento_identidad: "",
-        direccion: "",
-      });
+      const result = await onCreate(formData);
+
+      if (result?.success) {
+        // Limpiar formulario
+        setFormData({
+          rol: "Reclutador",
+          nombre: "",
+          correo: "",
+          telefono: "",
+          nombre_usuario: "",
+          contrasena: "",
+          documento_identidad: "",
+          direccion: "",
+        });
+      }
     }
   };
 
@@ -96,13 +124,14 @@ export function RecruiterModal({ isOpen, mode, recruiter, onClose, onCreate }) {
 
             <div>
               <Label className="text-gray-500 text-sm">Fecha de Creación</Label>
-              <p className="font-medium">{recruiter.created_at}</p>
+              <p className="font-medium">
+                {new Date(recruiter.created_at).toLocaleString("es-CO")}
+              </p>
             </div>
           </div>
         ) : (
           <div className="grid gap-4 py-5">
             {[
-              ["rol", "Rol", "Ej. Reclutador"],
               ["nombre", "Nombre", "Ej. María López"],
               ["correo", "Correo", "correo@empresa.com", "email"],
               ["telefono", "Teléfono", "3001234567"],
@@ -123,8 +152,14 @@ export function RecruiterModal({ isOpen, mode, recruiter, onClose, onCreate }) {
                     setFormData({ ...formData, [id]: e.target.value })
                   }
                   placeholder={placeholder}
-                  className="rounded-xl border-gray-300 focus:ring-2 focus:ring-[#44BBA4] focus:border-[#44BBA4] transition-all"
+                  className={`rounded-xl border-gray-300 focus:ring-2 focus:ring-[#44BBA4] focus:border-[#44BBA4] transition-all ${
+                    errors[id] ? "border-red-500" : ""
+                  }`}
+                  disabled={isCreating}
                 />
+                {errors[id] && (
+                  <span className="text-xs text-red-500">{errors[id]}</span>
+                )}
               </div>
             ))}
           </div>
@@ -135,7 +170,7 @@ export function RecruiterModal({ isOpen, mode, recruiter, onClose, onCreate }) {
           {mode === "view" ? (
             <Button
               onClick={onClose}
-              className="bg-[#44BBA4] hover:bg-[#3aa593] text-white font-semibold rounded-xl px-5"
+              className="cursor-pointer bg-[#44BBA4] hover:bg-[#3aa593] text-white font-semibold rounded-xl px-5"
             >
               Cerrar
             </Button>
@@ -144,15 +179,24 @@ export function RecruiterModal({ isOpen, mode, recruiter, onClose, onCreate }) {
               <Button
                 variant="outline"
                 onClick={onClose}
-                className="rounded-xl border-gray-300 text-gray-600 hover:bg-gray-100"
+                className="cursor-pointer rounded-xl border-gray-300 text-gray-600 hover:bg-gray-100"
+                disabled={isCreating}
               >
                 Cancelar
               </Button>
               <Button
-                className="bg-[#44BBA4] hover:bg-[#3aa593] text-white font-semibold rounded-xl px-5"
+                className="cursor-pointer bg-[#44BBA4] hover:bg-[#3aa593] text-white font-semibold rounded-xl px-5"
                 onClick={handleCreate}
+                disabled={isCreating}
               >
-                Crear Reclutador
+                {isCreating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Creando...
+                  </>
+                ) : (
+                  "Crear Reclutador"
+                )}
               </Button>
             </div>
           )}
