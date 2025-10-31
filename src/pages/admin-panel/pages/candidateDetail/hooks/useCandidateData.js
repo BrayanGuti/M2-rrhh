@@ -4,11 +4,15 @@ import { useEffect, useState } from "react";
 import { DEBUG_MODE } from "@/const/config.js";
 import { GET_CANDIDATE_DETAILS, GET_PDF_RESUME } from "@/const/endpoints.js";
 import { token } from "../../../utils/jwt";
+import {
+  getCacheKey,
+  saveToCache,
+  getFromCache,
+  STALE_TIME,
+} from "@/lib/react-query/cache";
+import { queryKeys, CANDIDATE_SECTIONS } from "@/lib/react-query/queryKeys";
 
-// Cache duration: 10 minutes
-const CACHE_DURATION = 10 * 60 * 1000;
-const STALE_TIME = 5 * 60 * 1000;
-
+// ==================== CONFIGURACIÓN ====================
 // PDF Local para modo DEBUG - Coloca tu PDF en la carpeta public
 const LOCAL_PDF_PATH = "/mock.pdf";
 
@@ -171,52 +175,6 @@ const mockResponses = {
   },
 };
 
-// ==================== CACHE UTILITIES ====================
-const getCacheKey = (id, section, type = "candidato") => {
-  return `${type}_${id}_${section}`;
-};
-
-const saveToCache = (key, data) => {
-  try {
-    const cacheData = {
-      data,
-      timestamp: Date.now(),
-    };
-    localStorage.setItem(key, JSON.stringify(cacheData));
-    if (DEBUG_MODE) {
-      console.log(`[CACHE] 💾 Saved: ${key}`);
-    }
-  } catch (error) {
-    console.error("[CACHE] Error saving to localStorage:", error);
-  }
-};
-
-const getFromCache = (key) => {
-  try {
-    const cached = localStorage.getItem(key);
-    if (!cached) return null;
-
-    const { data, timestamp } = JSON.parse(cached);
-    const age = Date.now() - timestamp;
-
-    if (age > CACHE_DURATION) {
-      localStorage.removeItem(key);
-      if (DEBUG_MODE) {
-        console.log(`[CACHE] 🗑️ Expired: ${key}`);
-      }
-      return null;
-    }
-
-    if (DEBUG_MODE) {
-      console.log(`[CACHE] ✅ Hit: ${key} (${Math.round(age / 1000)}s old)`);
-    }
-    return data;
-  } catch (error) {
-    console.error("[CACHE] Error reading from localStorage:", error);
-    return null;
-  }
-};
-
 // ==================== API UTILITIES ====================
 const simulateDelay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -308,9 +266,13 @@ const fetchPDFWithDebug = async (endpoint, delay = 1000) => {
  */
 export const useCandidateBasicInfo = (postulacionId) => {
   return useQuery({
-    queryKey: ["candidate", postulacionId, "basic"],
+    queryKey: queryKeys.candidates.basic(postulacionId),
     queryFn: async () => {
-      const cacheKey = getCacheKey(postulacionId, "basic", "postulacion");
+      const cacheKey = getCacheKey(
+        postulacionId,
+        CANDIDATE_SECTIONS.BASIC,
+        "postulacion"
+      );
       const cached = getFromCache(cacheKey);
 
       if (cached) return cached;
@@ -338,7 +300,7 @@ export const useCandidateCV = (candidatoId, enabled = true) => {
   const [pdfUrl, setPdfUrl] = useState(null);
 
   const query = useQuery({
-    queryKey: ["candidate", candidatoId, "cv"],
+    queryKey: queryKeys.candidates.cv(candidatoId),
     queryFn: async () => {
       const blob = await fetchPDFWithDebug(
         `/api/candidatos/${candidatoId}/cv_adjunto`,
@@ -354,6 +316,7 @@ export const useCandidateCV = (candidatoId, enabled = true) => {
     enabled: !!candidatoId && enabled,
     staleTime: Infinity, // El PDF no cambia durante la sesión
     cacheTime: Infinity, // Mantener en caché de React Query
+    gcTime: Infinity, // Para React Query v5+
     retry: 2,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
@@ -382,7 +345,7 @@ export const useCandidateCV = (candidatoId, enabled = true) => {
  */
 export const useCandidateSection = (candidatoId, section, enabled = true) => {
   return useQuery({
-    queryKey: ["candidate", candidatoId, section],
+    queryKey: queryKeys.candidates.section(candidatoId, section),
     queryFn: async () => {
       const cacheKey = getCacheKey(candidatoId, section, "candidato");
       const cached = getFromCache(cacheKey);
@@ -431,46 +394,46 @@ export const useCandidateDetail = (postulacionId) => {
   );
   const detallesQuery = useCandidateSection(
     candidatoId,
-    "detalles_personales",
+    CANDIDATE_SECTIONS.DETALLES_PERSONALES,
     basicQuery.isSuccess && !!candidatoId
   );
   const familiarQuery = useCandidateSection(
     candidatoId,
-    "informacion_familiar",
+    CANDIDATE_SECTIONS.INFORMACION_FAMILIAR,
     basicQuery.isSuccess && !!candidatoId
   );
   const academicaQuery = useCandidateSection(
     candidatoId,
-    "informacion_academica",
+    CANDIDATE_SECTIONS.INFORMACION_ACADEMICA,
     basicQuery.isSuccess && !!candidatoId
   );
 
   // LOTE 2: Prioridad Media
   const laboralQuery = useCandidateSection(
     candidatoId,
-    "informacion_laboral",
+    CANDIDATE_SECTIONS.INFORMACION_LABORAL,
     loadBatch2 && !!candidatoId
   );
   const referenciasQuery = useCandidateSection(
     candidatoId,
-    "referencias_personales",
+    CANDIDATE_SECTIONS.REFERENCIAS_PERSONALES,
     loadBatch2 && !!candidatoId
   );
   const generalesQuery = useCandidateSection(
     candidatoId,
-    "datos_generales",
+    CANDIDATE_SECTIONS.DATOS_GENERALES,
     loadBatch2 && !!candidatoId
   );
 
   // LOTE 3: Prioridad Baja
   const economicosQuery = useCandidateSection(
     candidatoId,
-    "datos_economicos",
+    CANDIDATE_SECTIONS.DATOS_ECONOMICOS,
     loadBatch3 && !!candidatoId
   );
   const tallasQuery = useCandidateSection(
     candidatoId,
-    "tallas",
+    CANDIDATE_SECTIONS.TALLAS,
     loadBatch3 && !!candidatoId
   );
 
@@ -537,21 +500,26 @@ export const useCandidateDetail = (postulacionId) => {
     if (DEBUG_MODE) {
       console.log(`[RETRY] 🔄 Retrying section: ${section}`);
     }
-    queryClient.invalidateQueries(["candidate", candidatoId, section]);
+    queryClient.invalidateQueries(
+      queryKeys.candidates.section(candidatoId, section)
+    );
   };
 
   // Función para reintentar todas las secciones fallidas
   const retryAllFailed = () => {
     const failedSections = [
-      { query: cvQuery, name: "cv" },
-      { query: detallesQuery, name: "detalles_personales" },
-      { query: familiarQuery, name: "informacion_familiar" },
-      { query: academicaQuery, name: "informacion_academica" },
-      { query: laboralQuery, name: "informacion_laboral" },
-      { query: referenciasQuery, name: "referencias_personales" },
-      { query: generalesQuery, name: "datos_generales" },
-      { query: economicosQuery, name: "datos_economicos" },
-      { query: tallasQuery, name: "tallas" },
+      { query: cvQuery, name: CANDIDATE_SECTIONS.CV },
+      { query: detallesQuery, name: CANDIDATE_SECTIONS.DETALLES_PERSONALES },
+      { query: familiarQuery, name: CANDIDATE_SECTIONS.INFORMACION_FAMILIAR },
+      { query: academicaQuery, name: CANDIDATE_SECTIONS.INFORMACION_ACADEMICA },
+      { query: laboralQuery, name: CANDIDATE_SECTIONS.INFORMACION_LABORAL },
+      {
+        query: referenciasQuery,
+        name: CANDIDATE_SECTIONS.REFERENCIAS_PERSONALES,
+      },
+      { query: generalesQuery, name: CANDIDATE_SECTIONS.DATOS_GENERALES },
+      { query: economicosQuery, name: CANDIDATE_SECTIONS.DATOS_ECONOMICOS },
+      { query: tallasQuery, name: CANDIDATE_SECTIONS.TALLAS },
     ].filter((s) => s.query.isError);
 
     if (DEBUG_MODE) {
@@ -561,7 +529,9 @@ export const useCandidateDetail = (postulacionId) => {
     }
 
     failedSections.forEach((section) => {
-      queryClient.invalidateQueries(["candidate", candidatoId, section.name]);
+      queryClient.invalidateQueries(
+        queryKeys.candidates.section(candidatoId, section.name)
+      );
     });
   };
 
